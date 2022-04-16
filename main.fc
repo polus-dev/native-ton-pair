@@ -1,6 +1,8 @@
 global int init?;
 global int biton_balance;
 global int query_id;
+global int operation_price;
+global int service_fee;
 global slice project_addr;
 global slice jetton_addr;
 
@@ -10,12 +12,39 @@ int get_price() method_id {
     return (get_balance() * 1000000000) / biton_balance;
 }
 
+_ init_data() impure {
+    ifnot(null?(init?)) {
+        return ();
+    }
+    var ds = get_data().begin_parse();
+    biton_balance = ds~load_coins();
+    query_id = ds~load_uint(64);
+    operation_price = ds~load_coins();
+    service_fee = ds~load_uint(32);
+    project_addr = ds~load_msg_addr();
+    jetton_addr = ds~load_msg_addr();
+    init? = true;
+}
 
-() buy_biton(int balance, int msg_value, slice in_msg_body, slice sender_address, int fwd_fee) impure {
+
+_ pack_data() impure {
+    set_data(begin_cell
+        .store_coins(biton_balance)
+        .store_uint(query_id, 64)
+        .store_coins(operation_price)
+        .store_uint(service_fee, 32)
+        .store_slice(project_addr)
+        .store_slice(jetton_addr)
+        .end_cell()
+    );
+}
+
+
+() buy_biton(int balance, int msg_value, slice in_msg_body, slice sender_address) impure {
     init_data();
     int price = get_price();
-    msg_value -= fwd_fee * 3;
-    throw_unless(707, msg_value > 0);
+    msg_value -= operation_price;
+    throw_unless(707, msg_value >= price);
     jetton_amount = msg_value * 1000000000 / price;
     var msg_body = begin_cell()
         .store_uint(op::transfer, 32)
@@ -29,11 +58,12 @@ int get_price() method_id {
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
-        .store_coins(fwd_wee * 3)
+        .store_coins(operation_price)
         .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
         .store_ref(msg_body);
     send_raw_message(msg.end_cell(), 1);
     biton_balance -= jetton_amount;
+    query_id += 1;
     pack_data();
 }
 
@@ -48,6 +78,7 @@ int get_price() method_id {
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(sender_addr)
+        .store_coins(ton_amount)
         .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1);
     send_raw_message(msg.end_cell(), 1);
     biton_balance += jetton_amount;
@@ -63,24 +94,42 @@ int get_price() method_id {
         return();
     }
     slice sender_address = cs~load_msg_addr();
-    cs~load_msg_addr(); ;; skip dst
-    cs~load_coins(); ;; skip value
-    cs~skip_bits(1); ;; skip extracurrency collection
-    cs~load_coins(); ;; skip ihr_fee
-    int fwd_fee = cs~load_coins(); 
+
+    int is_jetton_init? = jetton_addr.slice_bits() > 2;
+
+    if (~ is_jetton_init?) {
+        in_msg_body~skip_bits(32);
+        biton_balance = in_msg_body~load_coins();
+        jetton_addr = sender_address;
+        pack_data();
+        return();
+    }
+
     if (in_msg_body.slice_empty?()) { ;; just buy biton
-        buy_biton(balance, msg_value, in_msg_body, sender_address, fwd_fee);
+        buy_biton(balance, msg_value, in_msg_body, sender_address);
         return ();
     }
     int op = in_msg_body~load_uint(32);
 
-    if (op == op::withdraw) {
-        throw_unless(705, equal_slices(project_address, sender_address));
-    }
-
-    if (op == op::transfer_notification) {
+    if (op == op::transfer_notification()) {
         throw_unless(706, equal_slices(jetton_addr, sender_address));
         buy_ton(balance, msg_value, in_msg_body);
         return ();
     }
+
+    if (op == op::withdraw()) {
+        throw_unless(705, equal_slices(project_address, sender_address));
+        withdraw(in_msg_body);
+        return ();
+    }
+    
+    if (op == op::change_operation_price()) {
+        throw_unless(707, equal_slices(project_address, sender_address));
+        change_operation_price(in_msg_body);
+        return ();
+    }
+
+
+
+    throw(1337);
 }
