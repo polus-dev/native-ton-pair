@@ -47,7 +47,7 @@ _ pack_data() impure {
     throw_unless(707, msg_value >= price);
     jetton_amount = msg_value * 1000000000 / price;
     var msg_body = begin_cell()
-        .store_uint(op::transfer, 32)
+        .store_uint(op::transfer(), 32)
         .store_uint(query_id, 64) ;; query_id
         .store_coins(jetton_amount) ;; jetton amount
         .store_slice(sender_address) ;; sender addr
