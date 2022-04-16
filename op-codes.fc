@@ -1,0 +1,4 @@
+int op::transfer_notification() asm "0x7362d09c PUSHINT";
+int op::transfer() asm "0xf8a7ea5 PUSHINT";
+int op::withdraw() asm "1 PUSHINT";
+int op::change_operation_price() asm "2 PUSHINT";
