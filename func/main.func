@@ -92,8 +92,7 @@
     biton_balance -= amount;
 }
 
-
-() recv_internal(int balance, int msg_value, slice in_msg_body, cell in_msg_cell) impure {
+() recv_internal(int balance, int msg_value, cell in_msg_cell, slice in_msg_body) impure {
     init_data();
     slice cs = in_msg_cell.begin_parse();
     int flags = cs~load_uint(4);
@@ -102,7 +101,7 @@
     }
     slice sender_address = cs~load_msg_addr();
 
-    int is_jetton_init? = jetton_addr.slice_bits() > 2;
+    int is_jetton_init? = ~(equal_slices(jetton_addr, extlib::addr_none()));
 
     if (~ is_jetton_init?) {
         in_msg_body~skip_bits(32 + 64);
@@ -123,7 +122,7 @@
         buy_ton(balance, msg_value, in_msg_body);
         return ();
     }
-    
+
     if (op == op::change_operation_price()) {
         throw_unless(err::fake_addr(), equal_slices(project_addr, sender_address));
         operation_price = in_msg_body~load_coins();
