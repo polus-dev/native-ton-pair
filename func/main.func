@@ -5,7 +5,7 @@ global int int_gbl::balance;
 
 
     msg_value -= operation_price;
-    throw_if(err::small_trans(), msg_value <= 5000000000);
+    throw_if(err::small_trans(), msg_value <= 500000000);
     (int jetton_amount, _) = get_price_biton(msg_value);
 
     throw_if(err::no_balance(), jetton_amount >= biton_balance);
