@@ -2,3 +2,6 @@
 
 !auto/.gitkeep
 auto/*
+
+init.boc
+testnet-global.config.json

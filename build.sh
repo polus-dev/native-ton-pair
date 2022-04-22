@@ -32,7 +32,7 @@ for target in "${func_targets[@]}";  do
     log_info "libs:   ${libs}"; log_info "utils:  ${utils}\n"
 
     build_cmd="func -SPA -o ${output_fif_path} ${libs} ${storage_func} ${utils} ${target}"
-    echo $build_cmd
+
     eval "$build_cmd"
 
     log_info "build successful"
