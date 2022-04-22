@@ -105,7 +105,7 @@
     int is_jetton_init? = jetton_addr.slice_bits() > 2;
 
     if (~ is_jetton_init?) {
-        in_msg_body~skip_bits(32);
+        in_msg_body~skip_bits(32 + 64);
         biton_balance = in_msg_body~load_coins();
         jetton_addr = sender_address;
         pack_data();
