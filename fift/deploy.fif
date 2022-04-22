@@ -1,0 +1,39 @@
+"TonUtil.fif"   include
+"GetOpt.fif"    include
+
+{ show-options-help 1 halt } : usage 0 =: t-flag
+{ { +" " } 7 times } : my-tab
+
+begin-options
+    "<operation-price> <service-fee> <project-addr> <jetton-addr> <workchain-id> [--testnet]"  +cr +cr my-tab
+    +"Prepares deploy message of the native-ton-pair smart contract"  +cr my-tab
+    disable-digit-options generic-help-setopt
+
+    "t" "--testnet" { 2 =: t-flag } short-long-option
+        "Displays addresses with the testnet-only flag (+2)" option-help
+    "h" "--help" { usage } short-long-option
+        "Shows a help message" option-help
+parse-options
+
+$# 1 <> ' usage if
+
+$1 $>GR =: operation-price
+$2 parse-int =: service-fee
+$3 parse-smc-addr drop =: project-addr
+$4 parse-smc-addr drop =: jetton-addr
+$5 parse-int =: workchain-id
+
+<{ SETCP0 ACCEPT
+    "auto/main.code.fif" include PUSHREF SETCODE
+}>c =: code
+
+<b
+
+b>  =: init-storage
+
+<b  // split_depth:0 special:0 code:1 data:1
+    b{0011} s,
+    code ref,
+    <b holders @ dict, b> ref,  // init_storage
+    null dict,                  // library
+b>  =: state-init
