@@ -31,7 +31,7 @@ for target in "${func_targets[@]}";  do
     utils=$(join_by " " "$(listdir $func_utils_path)")
     log_info "libs:   ${libs}"; log_info "utils:  ${utils}\n"
 
-    build_cmd="func -SPA -o ${output_fif_path} ${storage_func} ${libs} ${utils} ${target}"
+    build_cmd="func -SPA -o ${output_fif_path} ${libs} ${storage_func} ${utils} ${target}"
     echo $build_cmd
     eval "$build_cmd"
 

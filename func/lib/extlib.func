@@ -1,5 +1,5 @@
 ;;
-;; extension for FunC standard library (stdlib.fc)
+;; extension for FunC standard library (stdlib.func)
 ;;
 
 int     extlib::tuple_len(tuple t)                      asm "TLEN PUSHINT";
