@@ -1,0 +1,25 @@
+int get_price() method_id {
+    init_data();
+    return (get_balance() * 1000000000) / biton_balance;
+}
+
+int get_operation_price() method_id {
+    init_data();
+    return operation_price;
+}
+
+int get_service_fee() method_id {
+    init_data();
+    return service_fee;
+}
+
+slice get_project_address() method_id {
+    init_data();
+    return project_addr;
+}
+
+slice get_jetton_address() method_id {
+    init_data();
+    return jetton_addr;
+}
+

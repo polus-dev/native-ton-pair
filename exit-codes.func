@@ -1,5 +1,0 @@
-int err::no_op() asm "2000 PUSHINT"; ;; no op in forward payload
-int err::no_balance() asm "2001 PUSHINT"; ;; insufficient balance to complete the transaction
-int err::fake_addr() asm "2002 PUSHINT"; ;; the notification came from a fake address (not an admin address or jetton wallet address)
-int err::small_trans() asm "2003 PUSHINT"; ;; too small transaction
-
