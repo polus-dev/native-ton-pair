@@ -123,12 +123,6 @@
         buy_ton(balance, msg_value, in_msg_body);
         return ();
     }
-
-    if (op == op::withdraw()) { ;; withdraw comission 
-        throw_unless(err::fake_addr(), equal_slices(project_address, sender_address));
-        withdraw(in_msg_body);
-        return ();
-    }
     
     if (op == op::change_operation_price()) {
         throw_unless(err::fake_addr(), equal_slices(project_address, sender_address));
