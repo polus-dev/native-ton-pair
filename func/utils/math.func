@@ -14,7 +14,7 @@ int multiply(int a, int b) {
 ;; ton -> biton
 (int, int) get_price_biton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
-    int reserve_a_initial = get_balance(); ;; liq ton
+    int reserve_a_initial = get_balance().pair_first(); ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
     int amount_input = division(multiply(amount_traded, 1000 - service_fee), 1000); ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
@@ -30,7 +30,7 @@ int multiply(int a, int b) {
 ;; biton -> ton
 (int, int) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
-    int reserve_a_initial = get_balance(); ;; liq ton
+    int reserve_a_initial = get_balance().pair_first(); ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
     int amount_input = division(multiply(amount_traded, 1000 - service_fee), 1000); ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas

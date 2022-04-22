@@ -1,6 +1,5 @@
 global int init?;
 global int biton_balance; ;; biton liq
-global int query_id;
 global int operation_price; ;; 
 global int service_fee; ;; service fee in percentage
 global slice project_addr; ;; admin address
@@ -15,9 +14,8 @@ _ init_data() impure {
     }
     var ds = get_data().begin_parse();
     biton_balance = ds~load_coins();
-    query_id = ds~load_uint(64);
     operation_price = ds~load_coins();
-    service_fee = ds~load_uint(32);
+    service_fee = ds~load_uint(10);
     project_addr = ds~load_msg_addr();
     jetton_addr = ds~load_msg_addr();
     init? = true;
@@ -27,9 +25,8 @@ _ init_data() impure {
 _ pack_data() impure {
     set_data(begin_cell
         .store_coins(biton_balance)
-        .store_uint(query_id, 64)
         .store_coins(operation_price)
-        .store_uint(service_fee, 32)
+        .store_uint(service_fee, 10)
         .store_slice(project_addr)
         .store_slice(jetton_addr)
         .end_cell()
