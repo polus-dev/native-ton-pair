@@ -28,7 +28,10 @@ $5 parse-int =: workchain-id
 }>c =: code
 
 <b
-
+    0 Gram                  // biton_balance
+    operation-price Gram,   // operation_price
+    service-fee 10 u,       // service_fee
+    project-addr
 b>  =: init-storage
 
 <b  // split_depth:0 special:0 code:1 data:1
