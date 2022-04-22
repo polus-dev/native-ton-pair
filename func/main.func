@@ -125,7 +125,7 @@
     }
     
     if (op == op::change_operation_price()) {
-        throw_unless(err::fake_addr(), equal_slices(project_address, sender_address));
+        throw_unless(err::fake_addr(), equal_slices(project_addr, sender_address));
         operation_price = in_msg_body~load_coins();
         pack_data();
         return ();
@@ -136,7 +136,7 @@
     }
 
     if (op == op::withdraw_liquidity()) {
-       throw_unless(err::fake_addr(), equal_slices(project_address, sender_address));
+       throw_unless(err::fake_addr(), equal_slices(project_addr, sender_address));
        int curr = in_msg_body~load_uint(1);
        if (curr == 0) {
             withdraw_ton(in_msg_body);
