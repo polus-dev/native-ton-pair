@@ -48,7 +48,7 @@
 
     (int ton_amount, _) = get_price_ton(jetton_amount);
 
-    throw_if(err::no_balance(), ton_amount >= get_balance());
+    throw_if(err::no_balance(), ton_amount >= get_balance().pair_first());
 
     var msg = begin_cell()
         .store_uint(0x18, 6)
@@ -64,7 +64,7 @@
 () withdraw_ton(slice in_msg_body) impure {
     init_data();
     int amount = in_msg_body.load_coins();
-    throw_if(err::no_balance(), amount > get_balance());
+    throw_if(err::no_balance(), amount > get_balance().pair_first());
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(project_addr)
