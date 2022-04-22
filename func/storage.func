@@ -23,7 +23,7 @@ _ init_data() impure {
 
 
 _ pack_data() impure {
-    set_data(begin_cell
+    set_data(begin_cell()
         .store_coins(biton_balance)
         .store_coins(operation_price)
         .store_uint(service_fee, 10)
