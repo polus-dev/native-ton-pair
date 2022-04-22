@@ -12,7 +12,7 @@
 
     var msg_body = begin_cell()
         .store_uint(op::transfer(), 32)
-        .store_uint(query_id, 64) ;; query_id
+        .store_uint(cur_lt(), 64) ;; query_id
         .store_coins(jetton_amount) ;; jetton amount
         .store_slice(sender_address) ;; sender addr
         .store_slice(sender_address) ;;  response_addr
@@ -27,7 +27,6 @@
         .store_ref(msg_body);
     send_raw_message(msg.end_cell(), 1);
     biton_balance -= jetton_amount;
-    query_id += 1;
     pack_data();
 }
 
@@ -79,7 +78,7 @@
     int amount = in_msg_body~load_coins();
     var msg_body = begin_cell()
         .store_uint(op::transfer(), 32)
-        .store_uint(query_id, 64)
+        .store_uint(cur_lt(), 64)
         .store_coins(amount)
         .store_slice(project_addr) ;; destina
         .end_cell();
