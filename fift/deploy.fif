@@ -31,12 +31,13 @@ $5 parse-int =: workchain-id
     0 Gram                  // biton_balance
     operation-price Gram,   // operation_price
     service-fee 10 u,       // service_fee
-    project-addr
+    project-addr addr,      // project_addr
+    jetton-addr addr,       // jetton_addr
 b>  =: init-storage
 
-<b  // split_depth:0 special:0 code:1 data:1
-    b{0011} s,
+<b
+    b{0011} s,   // split_depth:0 special:0 code:1 data:1
     code ref,
-    <b holders @ dict, b> ref,  // init_storage
-    null dict,                  // library
+    init-storage ref,
+    null dict,   // library
 b>  =: state-init
