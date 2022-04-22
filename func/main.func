@@ -63,13 +63,13 @@
 
 () withdraw_ton(slice in_msg_body) impure {
     init_data();
-    int amount = in_msg_body.load_coins();
+    int amount = in_msg_body~load_coins();
     throw_if(err::no_balance(), amount > get_balance().pair_first());
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(project_addr)
         .store_coins(amount)
-        .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 +1);
+        .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1);
     send_raw_message(msg.end_cell(), 3);
 }
 
