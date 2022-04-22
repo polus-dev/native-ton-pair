@@ -1,4 +1,4 @@
-
+global int int_gbl::balance;
 
 () buy_biton(int balance, int msg_value, slice in_msg_body, slice sender_address) impure {
     init_data();
@@ -48,7 +48,7 @@
 
     (int ton_amount, _) = get_price_ton(jetton_amount);
 
-    throw_if(err::no_balance(), ton_amount >= get_balance().pair_first());
+    throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
 
     var msg = begin_cell()
         .store_uint(0x18, 6)
@@ -64,7 +64,7 @@
 () withdraw_ton(slice in_msg_body) impure {
     init_data();
     int amount = in_msg_body~load_coins();
-    throw_if(err::no_balance(), amount > get_balance().pair_first());
+    throw_if(err::no_balance(), amount > int_gbl::balance);
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(project_addr)
@@ -93,7 +93,9 @@
 }
 
 () recv_internal(int balance, int msg_value, cell in_msg_cell, slice in_msg_body) impure {
+    int_gbl::balance = balance;
     init_data();
+
     slice cs = in_msg_cell.begin_parse();
     int flags = cs~load_uint(4);
     if (flags & 1) {

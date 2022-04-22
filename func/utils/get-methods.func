@@ -1,6 +1,11 @@
+int get_btn_balance() method_id {
+    init_data();
+    return biton_balance;
+}
+
 int get_price() method_id {
     init_data();
-    return (get_balance().pair_first() * 1000000000) / biton_balance;
+    return (pair_first(get_balance()) * 1000000000) / biton_balance;
 }
 
 int get_operation_price() method_id {
