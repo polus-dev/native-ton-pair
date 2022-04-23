@@ -9,19 +9,21 @@ global int int_gbl::balance;
     throw_if(err::no_balance(), jetton_amount >= biton_balance);
 
     var msg_body = begin_cell()
-        .store_uint(op::transfer(), 32)
+        .store_uint(0xf8a7ea5, 32) ;; op::transfer()
         .store_uint(cur_lt(), 64) ;; query_id
         .store_coins(jetton_amount) ;; jetton amount
         .store_slice(sender_address) ;; sender addr
         .store_slice(sender_address) ;;  response_addr
         .store_int(0, 1) ;; custom payload
+        .store_coins(0)  ;; forward ton amount
         .store_int(0, 1) ;; forward ton amount
         .end_cell();
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
         .store_coins(operation_price)
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        ;; last bit in 107 bits is "1", mean that body:(Either X ^X) in ref
+        .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_ref(msg_body);
     send_raw_message(msg.end_cell(), 1);
     biton_balance -= jetton_amount;
