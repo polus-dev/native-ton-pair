@@ -9,27 +9,30 @@ int multiply(int a, int b) {
 }
 
 ;; ton -> biton
-(int, int) get_price_biton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
+(int, int, int) get_price_biton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
-    int reserve_a_initial = pair_first(get_balance()); ;; liq ton
+    int reserve_a_initial = pair_first(get_balance()) - collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
-    int amount_input = division(multiply(amount_traded, 1000 - service_fee), 1000); ;; equivalent to amount_traded - service_fee(percentage)
+    int fee = division(multiply(amount_traded, service_fee), 1000);
+    int amount_input = amount_traded - fee; ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_b_after_execution = division(k, reserve_a_initial + amount_input);
     int amount_out = reserve_b_initial - reserve_b_after_execution;
     int market_price = division(amount_input, amount_out);
-    return (amount_out, market_price);
+    return (amount_out, market_price, fee);
 }
 
 ;; biton -> ton
-(int, int) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
+(int, int, int) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
-    int reserve_a_initial = pair_first(get_balance()); ;; liq ton
+    int reserve_a_initial = pair_first(get_balance()) - collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
-    int amount_input = division(multiply(amount_traded, 1000 - service_fee), 1000); ;; equivalent to amount_traded - service_fee(percentage)
+    int amount_input = amount_traded; ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_a_after_execution = division(k, reserve_b_initial + amount_input);
     int amount_out = reserve_a_initial - reserve_a_after_execution;
+    int fee = division(multiply(amount_out, service_fee), 1000);
+    amount_out -= fee;
     int market_price = division(amount_input, amount_out);
-    return (amount_out, market_price);
+    return (amount_out, market_price, fee);
 }

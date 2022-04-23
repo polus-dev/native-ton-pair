@@ -18,6 +18,12 @@ int get_service_fee() method_id {
     return service_fee;
 }
 
+
+int get_collect_fee() method_id {
+    init_data();
+    return collect_fee;
+}
+
 slice get_project_address() method_id {
     init_data();
     return project_addr;
