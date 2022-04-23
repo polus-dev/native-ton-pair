@@ -31,20 +31,13 @@ global int int_gbl::balance;
 }
 
 
-() buy_ton(int balance, int msg_value, slice in_msg_body) impure {
+() buy_ton(int msg_value, slice in_msg_body) impure {
     init_data();
     int query_id = in_msg_body~load_uint(64);
     int jetton_amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
     
-    throw_if(err::no_op(), in_msg_body.slice_empty?());
-    int op = in_msg_body~load_uint(32);
-
-    if(op == op::add_liquidity()) {
-        biton_balance += jetton_amount;
-        return ();
-    }
-
+    if (in_msg_body~slice_empty?()) {
     (int ton_amount, _) = get_price_ton(jetton_amount);
 
     throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
@@ -58,6 +51,15 @@ global int int_gbl::balance;
     send_raw_message(msg.end_cell(), 1);
     biton_balance += jetton_amount;
     pack_data();
+    }
+    else {
+    int op = in_msg_body~load_uint(32);
+
+    if(op == op::add_liquidity()) {
+        biton_balance += jetton_amount;
+        pack_data();
+    }
+    }
 }
 
 
