@@ -1,9 +1,7 @@
 global int int_gbl::balance;
 
-() buy_biton(int balance, int msg_value, slice in_msg_body, slice sender_address) impure {
+() buy_biton(int msg_value, slice sender_address) impure {
     init_data();
-
-
     msg_value -= operation_price;
     throw_if(err::small_trans(), msg_value <= 500000000);
     (int jetton_amount, _) = get_price_biton(msg_value);
@@ -23,7 +21,7 @@ global int int_gbl::balance;
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
         .store_coins(operation_price)
-        .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_ref(msg_body);
     send_raw_message(msg.end_cell(), 1);
     biton_balance -= jetton_amount;
@@ -45,7 +43,6 @@ global int int_gbl::balance;
         return ();
     }
 
-
     (int ton_amount, _) = get_price_ton(jetton_amount);
 
     throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
@@ -54,7 +51,8 @@ global int int_gbl::balance;
         .store_uint(0x18, 6)
         .store_slice(sender_addr)
         .store_coins(ton_amount)
-        .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1);
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
+
     send_raw_message(msg.end_cell(), 1);
     biton_balance += jetton_amount;
     pack_data();
@@ -114,7 +112,15 @@ global int int_gbl::balance;
     }
 
     if (in_msg_body.slice_empty?()) { ;; just buy biton
-        buy_biton(balance, msg_value, in_msg_body, sender_address);
+
+        var msg = begin_cell()
+                .store_uint(0x18, 6)
+                .store_slice(project_addr)
+                .store_coins(12281)
+                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
+
+        send_raw_message(msg.end_cell(), 1);
+        buy_biton(msg_value, sender_address);
         return ();
     }
     int op = in_msg_body~load_uint(32);
