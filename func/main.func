@@ -47,7 +47,7 @@ global int int_gbl::balance;
     int jetton_amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
     
-    if (in_msg_body~slice_empty?()) {
+    if (in_msg_body.slice_empty?()) {
         (int ton_amount, _, int fee) = get_price_ton(jetton_amount);
 
         throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
@@ -159,7 +159,7 @@ global int int_gbl::balance;
 
     if (op == op::transfer_notification()) {
         throw_unless(err::fake_addr(), equal_slices(jetton_addr, sender_address));
-        buy_ton(balance, msg_value, in_msg_body);
+        buy_ton(msg_value, in_msg_body);
         return ();
     }
 
