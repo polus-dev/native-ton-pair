@@ -46,33 +46,28 @@ global int int_gbl::balance;
     int query_id = in_msg_body~load_uint(64);
     int jetton_amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
-    
-    if (in_msg_body.slice_empty?()) {
-        (int ton_amount, _, int fee) = get_price_ton(jetton_amount);
 
-        throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
-
-        var msg = begin_cell()
-            .store_uint(0x18, 6)
-            .store_slice(sender_addr)
-            .store_coins(ton_amount)
-            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-            .store_uint(0, 32)
-            .store_slice(msg::biton_to_ton());
-        send_raw_message(msg.end_cell(), 1);
-
+    if equal_slices(sender_addr, project_addr) {
         biton_balance += jetton_amount;
-        collect_fee += fee;
         pack_data();
+        throw(0);
     }
-    else {
-        int op = in_msg_body~load_uint(32);
 
-        if(op == op::add_liquidity()) {
-            biton_balance += jetton_amount;
-            pack_data();
-        }
-    }
+    (int ton_amount, _, int fee) = get_price_ton(jetton_amount);
+    throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
+
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(sender_addr)
+        .store_coins(ton_amount)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_uint(0, 32)
+        .store_slice(msg::biton_to_ton());
+    send_raw_message(msg.end_cell(), 1);
+
+    biton_balance += jetton_amount;
+    collect_fee += fee;
+    pack_data();
 }
 
 
@@ -127,10 +122,8 @@ global int int_gbl::balance;
     init_data();
 
     slice cs = in_msg_cell.begin_parse();
-    int flags = cs~load_uint(4);
-    if (flags & 1) {
-        return();
-    }
+    throw_if(0, cs~load_uint(4) & 1); ;; ignore bounce
+
     slice sender_address = cs~load_msg_addr();
 
     int is_jetton_init? = ~(equal_slices(jetton_addr, extlib::addr_none()));
@@ -144,14 +137,6 @@ global int int_gbl::balance;
     }
 
     if (in_msg_body.slice_empty?()) { ;; just buy biton
-
-        var msg = begin_cell()
-                .store_uint(0x18, 6)
-                .store_slice(project_addr)
-                .store_coins(12281)
-                .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
-
-        send_raw_message(msg.end_cell(), 1);
         buy_biton(msg_value, sender_address);
         return ();
     }
@@ -191,5 +176,6 @@ global int int_gbl::balance;
         withdraw_fee();
         return ();
     }
-    throw(1337);
+
+    throw(0xffff);  ;; not found op
 }

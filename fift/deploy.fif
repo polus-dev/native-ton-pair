@@ -30,6 +30,7 @@ $4 parse-int =: workchain-id
 <b
     0 Gram,                 // biton_balance
     operation-price Gram,   // operation_price
+    0 Gram,                 // collect_fee
     service-fee 10 u,       // service_fee
     project-addr Addr,      // project_addr
     b{00} s,                // jetton_addr (addr-none)
