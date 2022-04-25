@@ -5,7 +5,7 @@ global int collect_fee; ;; the commission we have collected
 global int service_fee; ;; service fee in percentage
 global slice project_addr; ;; admin address
 global slice jetton_addr; ;; jetton wallet addr
-
+global int int_gbl::balance;
 
 
 

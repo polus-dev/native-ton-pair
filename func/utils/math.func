@@ -1,15 +1,19 @@
 ;; math logic 
 
-int division(int a, int b) {
+int division(int a, int b) { ;; division with factor
     return a * 1000000000 / b;
 }
 
-int multiply(int a, int b) {
+int multiply(int a, int b) { ;; multiply with factor
     return a * b / 1000000000;
 }
 
 ;; ton -> biton
-(int, int, int) get_price_biton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
+(
+    int, ;; amount out
+    int, ;; market price
+    int  ;; fee
+) get_price_biton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
     int reserve_a_initial = pair_first(get_balance()) - collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
@@ -23,7 +27,11 @@ int multiply(int a, int b) {
 }
 
 ;; biton -> ton
-(int, int, int) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
+(
+    int, ;; amount out
+    int, ;; market price
+    int  ;; fee
+) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
     int reserve_a_initial = pair_first(get_balance()) - collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton

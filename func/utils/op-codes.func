@@ -3,4 +3,3 @@ int op::transfer() asm "0xf8a7ea5 PUSHINT";
 int op::withdraw_liquidity() asm "1000 PUSHINT";
 int op::change_operation_price() asm "1001 PUSHINT";
 int op::add_liquidity() asm "1002 PUSHINT";
-int op::withdraw_fee() asm "1003 PUSHINT";

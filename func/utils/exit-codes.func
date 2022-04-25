@@ -3,4 +3,4 @@ int err::no_balance() asm "2001 PUSHINT"; ;; insufficient balance to complete th
 int err::fake_addr() asm "2002 PUSHINT"; ;; the notification came from a fake address (not an admin address or jetton wallet address)
 int err::small_trans() asm "2003 PUSHINT"; ;; too small transaction
 int err::small_fee() asm "2004 PUSHINT"; ;; fee too small
-
+int err::no_comment() asm "2005 PUSHINT"; 
