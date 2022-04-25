@@ -46,3 +46,10 @@
         .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
     send_raw_message(msg.end_cell(), 3);
 }
+
+() adm::change_operation_price(slice in_msg_body) impure {
+    init_data();
+    operation_price = in_msg_body~load_coins();
+    pack_data();
+    return ();
+}

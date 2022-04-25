@@ -24,23 +24,22 @@
         return ();
     }
     throw(0xffff);
-}
 
 
-() handle::admin_methods(slice in_msg_body) impure{
-    throw_if(no_op(), in_msg_body.slice_empty?()); 
+() handle::admin_methods(slice in_msg_body) impure {
+    throw_if(err::no_op(), in_msg_body.slice_empty?()); 
     int op = in_msg_body~load_uint(32);
 
     if (op == 0) {
-        if(equal_slices(response::withdraw_fee(), in_msg_body)) {
+        if (equal_slices(response::withdraw_fee(), in_msg_body)) {
             adm::withdraw_fee();
-            return();
+
         }
-        throw(err::no_comment());
+        return ();
     }
 
     if(op == op::change_operation_price()) {
-        adm::change_operation_price;
+        adm::change_operation_price(in_msg_body);
         return ();
     }
     

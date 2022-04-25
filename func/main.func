@@ -11,7 +11,7 @@
 
     int is_jetton_init? = ~(equal_slices(jetton_addr, extlib::addr_none()));
     if (~ is_jetton_init?) {
-        handle::init_jetton();
+        handle::init_jetton(in_msg_body, sender_address);
         return ();
     }
 
