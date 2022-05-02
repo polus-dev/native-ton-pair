@@ -3,7 +3,6 @@
 
 func_targets=( "func/main.func" )
 func_libs_path="func/lib"; func_utils_path="func/utils"
-storage_func="func/storage.func"
 out_dir="auto"
 
 function log_info {
@@ -31,7 +30,7 @@ for target in "${func_targets[@]}";  do
     utils=$(join_by " " "$(listdir $func_utils_path)")
     log_info "libs:   ${libs}"; log_info "utils:  ${utils}\n"
 
-    build_cmd="func -SPA -o ${output_fif_path} ${libs} ${storage_func} ${utils} ${target}"
+    build_cmd="func -SPA -o ${output_fif_path} ${libs} ${utils} ${target}"
 
     eval "$build_cmd"
 
