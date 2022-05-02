@@ -24,7 +24,7 @@
         return ();
     }
     throw(0xffff);
-
+}
 
 () handle::admin_methods(slice in_msg_body) impure {
     throw_if(err::no_op(), in_msg_body.slice_empty?()); 

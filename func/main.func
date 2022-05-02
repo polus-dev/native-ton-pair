@@ -24,6 +24,4 @@
         handle::user_methods(sender_address, msg_value, in_msg_body);
         return ();
     }
-
-    throw(0xffff);  ;; not found op
 }
