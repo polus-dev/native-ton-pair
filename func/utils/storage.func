@@ -1,37 +1,43 @@
-global int init?;
-global int biton_balance; ;; biton liq
-global int operation_price; ;; 
-global int collect_fee; ;; the commission we have collected
-global int service_fee; ;; service fee in percentage
-global slice project_addr; ;; admin address
-global slice jetton_addr; ;; jetton wallet addr
-global int int_gbl::balance;
+    global int init?;
+    global int biton_balance; ;; biton liq
+    global int operation_price; ;; 
+    global int collect_fee; ;; the commission we have collected
+    global int a_service_fee; ;; active a service fee in percentage
+    global int b_service_fee; ;; active b service fee in percentage
+    global int max_price_percentage; ;; maximum percentage mark-up
+    global slice project_addr; ;; admin address
+    global slice jetton_addr; ;; jetton wallet addr
+    global int int_gbl::balance;
 
 
 
-_ init_data() impure {
-    ifnot(null?(init?)) {
-        return ();
+    _ init_data() impure {
+        ifnot(null?(init?)) {
+            return ();
+        }
+        var ds = get_data().begin_parse();
+        biton_balance = ds~load_coins();
+        operation_price = ds~load_coins();
+        collect_fee = ds~load_coins();
+        a_service_fee = ds~load_uint(10);
+        b_service_fee = ds~load_uint(10);
+        max_price_percentage = ds~load_uint(10);
+        project_addr = ds~load_msg_addr();
+        jetton_addr = ds~load_msg_addr();
+        init? = true;
     }
-    var ds = get_data().begin_parse();
-    biton_balance = ds~load_coins();
-    operation_price = ds~load_coins();
-    collect_fee = ds~load_coins();
-    service_fee = ds~load_uint(10);
-    project_addr = ds~load_msg_addr();
-    jetton_addr = ds~load_msg_addr();
-    init? = true;
-}
 
 
-_ pack_data() impure {
-    set_data(begin_cell()
-        .store_coins(biton_balance)
-        .store_coins(operation_price)
-        .store_coins(collect_fee)
-        .store_uint(service_fee, 10)
-        .store_slice(project_addr)
-        .store_slice(jetton_addr)
-        .end_cell()
-    );
-}
+    _ pack_data() impure {
+        set_data(begin_cell()
+            .store_coins(biton_balance)
+            .store_coins(operation_price)
+            .store_coins(collect_fee)
+            .store_uint(a_service_fee, 10)
+            .store_uint(b_service_fee, 10)
+            .store_uint(max_price_percentage, 10)
+            .store_slice(project_addr)
+            .store_slice(jetton_addr)
+            .end_cell()
+        );
+    }
