@@ -13,9 +13,9 @@ int get_operation_price() method_id {
     return operation_price;
 }
 
-int get_service_fee() method_id {
+(int, int) get_service_fee() method_id {
     init_data();
-    return service_fee;
+    return (a_service_fee, b_service_fee);
 }
 
 
