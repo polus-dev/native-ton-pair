@@ -6,7 +6,7 @@
 { { +" " } 7 times } : my-tab
 
 begin-options
-    "<operation-price> <service-fee> <project-addr> <workchain-id> [--testnet]"  +cr +cr my-tab
+    "<operation-price> <a-service-fee> <b-service-fee> <max-price-percentage> <project-addr> <workchain-id> [--testnet]"  +cr +cr my-tab
     +"Prepares deploy message of the native-ton-pair smart contract"  +cr my-tab
     disable-digit-options generic-help-setopt
 
@@ -16,12 +16,14 @@ begin-options
         "Shows a help message" option-help
 parse-options
 
-$# 4 <> ' usage if
+$# 6 <> ' usage if
 
 $1 $>GR =: operation-price
-$2 parse-int =: service-fee
-$3 parse-smc-addr drop 2=: project-addr
-$4 parse-int =: workchain-id
+$2 parse-int =: a-service-fee
+$3 parse-int =: b-service-fee
+$4 parse-int =: max-price-percentage
+$5 parse-smc-addr drop 2=: project-addr
+$6 parse-int =: workchain-id
 
 <{ SETCP0 ACCEPT
     "auto/main.func.code.fif" include PUSHREF SETCODE
@@ -31,7 +33,9 @@ $4 parse-int =: workchain-id
     0 Gram,                 // biton_balance
     operation-price Gram,   // operation_price
     0 Gram,                 // collect_fee
-    service-fee 10 u,       // service_fee
+    a-service-fee 10 u,         // a-service-fee
+    b-service-fee 10 u,         // b-service-fee
+    max-price-percentage 10 u,  // max-price-percentage
     project-addr Addr,      // project_addr
     b{00} s,                // jetton_addr (addr-none)
 b>  =: init-storage

@@ -1,5 +1,8 @@
 ;; event emit functions
 
+int event_op::tonjetton() asm "-1 PUSHINT";
+int event_op::jettonton() asm "0  PUSHINT";
+
 () event::emit(slice to_addr, cell body) impure inline {
     int addr_bits = to_addr.slice_bits();
 

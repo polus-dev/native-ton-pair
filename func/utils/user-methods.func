@@ -1,3 +1,29 @@
+() usr::notify(
+    slice ntext, int dst,
+    int fees, int in_coins, int out_coins,
+    int line_price, int market_price, slice user_addr
+) impure {
+    builder msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(user_addr)
+        .store_coins(0)
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_uint(0, 32)
+        .store_slice(ntext);
+
+    send_raw_message(msg.end_cell(), 1);
+
+    builder event_body = begin_cell()
+        .store_int(dst, 1)
+        .store_coins(fees)
+        .store_coins(in_coins)
+        .store_coins(out_coins)
+        .store_coins(line_price)
+        .store_coins(market_price);
+
+    event::emit(user_addr, event_body.end_cell());
+}
+
 () usr::buy_ton(int msg_value, slice in_msg_body) impure {
     init_data();
     int query_id = in_msg_body~load_uint(64);
@@ -11,16 +37,14 @@
     }
 
     (int ton_amount, int m_price, int fee) = get_price_ton(jetton_amount);
+
     throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
 
-    var msg = begin_cell()
-        .store_uint(0x18, 6)
-        .store_slice(sender_addr)
-        .store_coins(ton_amount)
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .store_uint(0, 32)
-        .store_slice(msg::biton_to_ton());
-    send_raw_message(msg.end_cell(), 1);
+    usr::notify(
+        msg::biton_to_ton(), event_op::jettonton(),
+        fee, jetton_amount, ton_amount,
+        get_price(), m_price, sender_addr
+    );
 
     biton_balance += jetton_amount;
     collect_fee += fee;
@@ -54,6 +78,7 @@
         .store_coins(0)  ;; forward ton amount
         .store_int(0, 1) ;; forward ton amount
         .end_cell();
+
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
@@ -63,18 +88,12 @@
         .store_ref(msg_body);
     send_raw_message(msg.end_cell(), 1);
 
+    usr::notify(
+        msg::ton_to_biton(), event_op::tonjetton(),
+        fee, msg_value, jetton_amount,
+        get_price(), m_price, sender_address
+    );
 
-
-
-    ;; notification msg
-    var notification_msg = begin_cell()
-        .store_uint(0x18, 6)
-        .store_slice(sender_address)
-        .store_coins(0)
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .store_uint(0, 32)
-        .store_slice(msg::ton_to_biton());
-    send_raw_message(notification_msg.end_cell(), 3);
     collect_fee += fee;
     biton_balance -= jetton_amount;
     pack_data();
