@@ -1,7 +1,7 @@
-int op::transfer_notification() asm "0x7362d09c PUSHINT";
-int op::transfer() asm "0xf8a7ea5 PUSHINT";
-int op::withdraw_liquidity() asm "1000 PUSHINT";
-int op::change_operation_price() asm "1001 PUSHINT";
-int op::add_liquidity() asm "1002 PUSHINT";
-int op::buy() asm "1003 PUSHINT";
-int op::change_operation_price() asm "1004 PUSHINT";
+int op::transfer_notification()     asm "0x7362d09c PUSHINT";
+int op::transfer()                  asm "0xf8a7ea5 PUSHINT";
+int op::withdraw_liquidity()        asm "1000 PUSHINT";
+int op::change_operation_price()    asm "1001 PUSHINT";
+int op::add_liquidity()             asm "1002 PUSHINT";
+int op::buy()                       asm "1003 PUSHINT";
+int op::change_service_fee()        asm "1004 PUSHINT";

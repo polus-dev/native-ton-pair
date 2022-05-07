@@ -1,39 +1,8 @@
-#!/bin/bash
-# builder for BTN FunC code
-
-func_targets=( "func/main.func" )
-func_libs_path="func/lib"; func_utils_path="func/utils"
-out_dir="auto"
-
-function log_info {
-    # shellcheck disable=SC2059
-    printf "[info] $1\n"
-}
-
-function listdir() {
-    files=()
-    for entry in "$1"/*; do
-        files+=("$entry");
-    done
-    echo "${files[@]}"
-}
-
-function join_by() {
-    local IFS="$1"; shift; echo "$*"
-}
-
-for target in "${func_targets[@]}";  do
-    output_fif_path="${out_dir}/$(basename $target).code.fif"
-    log_info "target: ${target}"; log_info "output: ${output_fif_path}"
-
-    libs=$(join_by " " "$(listdir $func_libs_path)")
-    utils=$(join_by " " "$(listdir $func_utils_path)")
-    log_info "libs:   ${libs}"; log_info "utils:  ${utils}\n"
-
-    build_cmd="func -SPA -o ${output_fif_path} ${libs} ${utils} ${target}"
-
-    eval "$build_cmd"
-
-    log_info "build successful"
-    log_info "------------------------"
-done
+func -SPA -o "auto/main.func.code.fif" \
+    "func/lib/extlib.func" "func/lib/stdlib.func" \
+    "func/utils/event.func" \
+    "func/utils/op-codes.func" "func/utils/exit-codes.func" \
+    "func/utils/storage.func" "func/utils/math.func" "func/utils/msg-utils.func" \
+    "func/utils/admin-methods.func" "func/utils/user-methods.func" \
+    "func/utils/handles.func" "func/utils/get-methods.func" \
+    "func/main.func"
