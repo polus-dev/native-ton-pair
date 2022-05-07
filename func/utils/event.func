@@ -1,0 +1,16 @@
+;; event emit functions
+
+() event::emit(slice to_addr, cell body) impure inline {
+    int addr_bits = to_addr.slice_bits();
+
+    builder msg = begin_cell()
+        .store_uint(12, 4)  ;; 1100 (ext_in_msg_info$10 src:MsgAddressExt)
+        .store_uint(1, 2)   ;; addr_extern$01
+        .store_uint(addr_bits, 9) ;; len:(## 9)
+        .store_slice(to_addr~load_bits(addr_bits)) ;; external_address:(bits len)
+        .store_uint(0, 64 + 32) ;; 00...00 (created_lt:uint64 created_at:uint32)
+        .store_uint(1, 2)   ;; 01 (init:(Maybe ...) body:(Either X ^X))
+        .store_ref(body);   ;; ref to body
+
+    send_raw_message(msg.end_cell(), 1);
+}
