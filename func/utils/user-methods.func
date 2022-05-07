@@ -41,7 +41,7 @@
     int max_price = in_msg_body.slice_empty?() ? get_price() + division(multiply(get_price(), max_price_percentage), 1000) : in_msg_body~load_coins();
 
 
-    throw_if(err::max_price, m_price > max_price);
+    throw_if(err::max_price(), m_price > max_price);
 
     ;; jetton wallet msg
     var msg_body = begin_cell()

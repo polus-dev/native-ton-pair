@@ -44,7 +44,7 @@
     }
 
     if (op == op::change_service_fee()) {
-        adm::adm::change_service_fee(in_msg_body);
+        adm::change_service_fee(in_msg_body);
         return ();
     }
 
