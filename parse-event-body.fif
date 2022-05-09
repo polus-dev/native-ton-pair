@@ -1,0 +1,13 @@
+"TonUtil.fif" include 
+
+// ton-jetton body
+x{A076BB820280949088202276E9957A68529898A6AACCF43C_}
+
+1 i@+ swap  ."dst:          " 
+{ ."ton-jetton" } { ."jetton-ton" } cond cr
+
+Gram@+ swap ."fees:         " .GR cr
+Gram@+ swap ."in_coins:     " .GR cr
+Gram@+ swap ."out_coins:    " .GR cr
+Gram@+ swap ."line_price:   " .GR cr
+Gram@+ swap ."market_price: " .GR cr
