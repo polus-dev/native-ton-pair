@@ -55,8 +55,8 @@
     int jetton_amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
     int max_price = 0;
+    in_msg_body~skip_bits(1);
     if (~ in_msg_body.slice_empty?()) {
-        in_msg_body~skip_bits(1);
         op = in_msg_body~load_uint(32);
         if (op == op::buy()) {
             max_price = in_msg_body~load_grams();
