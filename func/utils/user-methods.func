@@ -24,19 +24,58 @@
     event::emit(user_addr, event_body.end_cell());
 }
 
+() usr::refund_biton(slice destination, int amount) impure {
+    init_data();
+    var msg_body = begin_cell()
+        .store_uint(op::transfer(), 32) ;; 0xf8a7ea5
+        .store_uint(cur_lt(), 64) ;; query_id
+        .store_coins(amount) ;; jetton amount
+        .store_slice(destination) ;; sender addr
+        .store_slice(my_address()) ;;  response_addr
+        .store_int(0, 1) ;; custom payload
+        .store_coins(0)  ;; forward ton amount
+        .store_int(0, 1) ;; forward ton amount
+        .end_cell();
+
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(jetton_addr)
+        .store_coins(operation_price)
+        ;; last bit in 107 bits is "1", mean that body:(Either X ^X) in ref
+        .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_ref(msg_body);
+    send_raw_message(msg.end_cell(), 1);
+    return ();
+}
+
+
 () usr::buy_ton(int msg_value, slice in_msg_body) impure {
     init_data();
     int query_id = in_msg_body~load_uint(64);
     int jetton_amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
-    in_msg_body~skip_bits(1);
-    int op = in_msg_body~load_uint(32);
-
+    int max_price = 0;
+    if (~ in_msg_body.slice_empty?()) {
+        in_msg_body~skip_bits(1);
+        op = in_msg_body~load_uint(32);
+        if (op == op::buy()) {
+            max_price = in_msg_body~load_grams();
+        }
+    }
+    else {
+        op = op::buy();
+        max_price = get_price() + division(multiply(get_price(), max_price_percentage), 1000);
+    }
     if (op == op::add_liquidity()) {
         return ();
     }
 
     (int ton_amount, int m_price, int fee) = get_price_ton(jetton_amount);
+
+    if (m_price > max_price) {
+        usr::refund_biton(sender_addr, jetton_amount);
+        return ();
+    }
 
     throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
 
@@ -98,3 +137,6 @@
     biton_balance -= jetton_amount;
     pack_data();
 }
+
+
+
