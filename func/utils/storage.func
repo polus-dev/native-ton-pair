@@ -15,7 +15,7 @@
     ;; other end
 
     ;; lp
-
+    global int lp_total_supply;
     global int lp_collect_fee;
     global int lp_fee_percentage;
     global int lp_withdraw_comission;
@@ -43,6 +43,7 @@
         max_price_percentage = ds~load_uint(32);
         project_addr = ds~load_msg_addr();
         jetton_addr = ds~load_msg_addr();
+        lp_total_supply = ds~load_coins();
         lp_collect_fee = ds~load_coins();
         lp_fee_percentage = ds~load_uint(32);
         lp_withdraw_comission = ds~load_uint(32);
@@ -63,7 +64,8 @@
             .store_uint(max_price_percentage, 32)
             .store_slice(project_addr)
             .store_slice(jetton_addr)
-            .store_grams(lp_collect_fee)
+            .store_coins(lp_total_supply)
+            .store_coins(lp_collect_fee)
             .store_uint(lp_fee_percentage, 32)
             .store_uint(lp_withdraw_comission, 32)
             .store_slice(lp_jwall_addr)

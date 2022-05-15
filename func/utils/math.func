@@ -25,7 +25,7 @@ LP formulas I'm dead inside 1000 - 🐈⛓
 -}
 
 
-int get_lp_value(int a, int b) {
+int math::get_lp_value(int a, int b) {
     return a * b / 1000000000;
 }
 
@@ -39,8 +39,8 @@ math::add_lp(int a, int b) method_id {
     init_data();
     int b_need = division(a, get_price());
     int b_out = b - b_need;
-    if ( b_out < 0 ) {return (-1, -1);}
-    int lp_out = get_lp_value(a, b_need);
+    if ( b_out < 0 ) { return (-1, -1);}
+    int lp_out = math::get_lp_value(a, b_need);
     return (lp_out, b_out); 
 }
 
@@ -74,7 +74,7 @@ math::add_lp(int a, int b) method_id {
     int  ;; fee
 ) get_price_biton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
-    int reserve_a_initial = pair_first(get_balance()) - collect_fee; ;; liq ton
+    int reserve_a_initial = pair_first(get_balance()) - service_collect_fee - lp_collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
     int fee = division(multiply(amount_traded, a_service_fee), 1000);
     int amount_input = amount_traded - fee; ;; equivalent to amount_traded - service_fee(percentage)
@@ -92,7 +92,7 @@ math::add_lp(int a, int b) method_id {
     int  ;; fee
 ) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
-    int reserve_a_initial = pair_first(get_balance()) - collect_fee; ;; liq ton
+    int reserve_a_initial = pair_first(get_balance()) -     service_collect_fee - lp_collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
     int amount_input = amount_traded; ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
