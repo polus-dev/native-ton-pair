@@ -1,0 +1,31 @@
+() lp::add_liquidity(int msg_value, slice in_msg_body) impure {
+    ;; some bebras cats and logic
+    return ();
+}
+
+() lp::del_liquidity(slice in_msg_body) impure {
+    init_data();
+    in_msg_body~skip_bits(64); ;; query_id
+    int amount = in_msg_body~load_coins();
+    slice sender_addr = in_msg_body~load_msg_addr();
+    (int ton_out, int biton_out, int collect_fee, int service_fee) = math::del_lp(amount);
+    service_collect_fee += service_fee;
+
+    var transfer_body = begin_cell()
+        .store_uint(op::transfer(), 32) ;; op
+        .store_uint(cur_lt(), 64) ;; query id
+        .store_coins(biton_out) ;; amount
+        .store_slice(sender_addr) ;; destination
+        .store_slice(my_address()) ;; response_destination
+        .store_uint(0, 1) ;; custom payload
+        .store_coins(ton_out + collect_fee) ;; forward ton amount
+        .store_uint(0, 1); ;; forward payload
+    var transfer_msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(jetton_addr)
+        .store_coins(ton_out + collect_fee + operation_price)
+        .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_ref(transfer_body);
+    send_raw_message(transfer_msg.end_cell(), 0);
+    pack_data();
+}

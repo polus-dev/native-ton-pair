@@ -1,3 +1,21 @@
+#include "lib/stdlib.func";
+#include "lib/extlib.func";
+#include "utils/storage.func";
+#include "utils/op-codes.func";
+#include "utils/exit-codes.func";
+#include "utils/msg-utils.func";
+#include "utils/get-methods.func";
+#include "utils/math.func";
+#include "utils/event.func";
+#include "utils/lp.func";
+#include "utils/admin-methods.func";
+#include "utils/user-methods.func";
+#include "utils/handles.func";
+
+
+
+
+
 () recv_internal(int balance, int msg_value, cell in_msg_cell, slice in_msg_body) impure {
     int_gbl::balance = balance;
     init_data();
@@ -16,8 +34,12 @@
     }
 
 
-    if(equal_slices(sender_address, project_addr)) {
+    if (equal_slices(sender_address, project_addr)) {
         handle::admin_methods(in_msg_body);
+        return ();
+    }
+    if (equal_slices(sender_address, lp_jwall_addr)) {
+        handle::lp_jwall_methods(sender_address, msg_value, in_msg_body);
         return ();
     }
     else {

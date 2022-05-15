@@ -8,6 +8,65 @@ int multiply(int a, int b) { ;; multiply with factor
     return a * b / 1000000000;
 }
 
+int minus_percent(int a, int percent, int factor) { ;; subtract the percentage from the number
+    return a - division(multiply(a, percent), factor);
+}
+
+int plus_percent(int a, int percent, int factor) {
+    return a + division(multiply(a, percent), factor);
+}
+
+int get_percent(int a, int percent, int factor) {
+    return division(multiply(a, percent), factor);
+}
+
+{-
+LP formulas I'm dead inside 1000 - 🐈⛓
+-}
+
+
+int get_lp_value(int a, int b) {
+    return a * b / 1000000000;
+}
+
+
+
+(
+int, ;; return lp tokens
+int ;; return b 
+)
+math::add_lp(int a, int b) method_id {
+    init_data();
+    int b_need = division(a, get_price());
+    int b_out = b - b_need;
+    if ( b_out < 0 ) {return (-1, -1);}
+    int lp_out = get_lp_value(a, b_need);
+    return (lp_out, b_out); 
+}
+
+
+(
+    int,  ;; a out
+    int,  ;; b out
+    int,  ;; fee out
+    int   ;; service comission
+) math::del_lp(int a) method_id {
+    init_data();
+    int user_percent = division(a, lp_total_supply);
+    int a_out = get_percent(get_balance().pair_first(), user_percent, 1000000000);
+    int b_out = get_percent(biton_balance, user_percent, 1000000000);
+    int fee_out = get_percent(lp_collect_fee, user_percent);
+    int linear_price = get_price();
+    int b_in_a = division(b_out, linear_price);
+    int withdraw_comission = get_percent(a_out + b_in_a, lp_withdraw_comission, 1000000000);
+    a_out -= withdraw_comission;
+    return (a_out, b_out, fee_out, withdraw_comission);
+}
+
+
+
+
+
 ;; ton -> biton
 (
     int, ;; amount out

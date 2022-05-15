@@ -64,7 +64,7 @@
     }
     else {
         op = op::buy();
-        max_price = get_price() + division(multiply(get_price(), max_price_percentage), 1000);
+        max_price = plus_percent(get_price(), max_price_percentage);
     }
     if (op == op::add_liquidity()) {
         return ();

@@ -1,12 +1,30 @@
     global int init?;
+    ;; other
+
+
     global int biton_balance; ;; biton liq
-    global int operation_price; ;; 
-    global int collect_fee; ;; the commission we have collected
+    global int operation_price;
+    global int service_collect_fee; ;; the commission we have collected
+    global int service_fee_percentage;
     global int a_service_fee; ;; active a service fee in percentage
     global int b_service_fee; ;; active b service fee in percentage
     global int max_price_percentage; ;; maximum percentage mark-up
     global slice project_addr; ;; admin address
     global slice jetton_addr; ;; jetton wallet addr
+
+    ;; other end
+
+    ;; lp
+
+    global int lp_collect_fee;
+    global int lp_fee_percentage;
+    global int lp_withdraw_comission;
+
+    global slice lp_jwall_addr;
+    global slice lp_minter_addr;
+
+    ;; lp end
+
     global int int_gbl::balance;
 
 
@@ -18,12 +36,18 @@
         var ds = get_data().begin_parse();
         biton_balance = ds~load_coins();
         operation_price = ds~load_coins();
-        collect_fee = ds~load_coins();
-        a_service_fee = ds~load_uint(10);
-        b_service_fee = ds~load_uint(10);
-        max_price_percentage = ds~load_uint(10);
+        service_collect_fee = ds~load_coins();
+        service_fee_percentage = ds~load_uint(32);
+        a_service_fee = ds~load_uint(32);
+        b_service_fee = ds~load_uint(32);
+        max_price_percentage = ds~load_uint(32);
         project_addr = ds~load_msg_addr();
         jetton_addr = ds~load_msg_addr();
+        lp_collect_fee = ds~load_coins();
+        lp_fee_percentage = ds~load_uint(32);
+        lp_withdraw_comission = ds~load_uint(32);
+        lp_jwall_addr = ds~load_msg_addr();
+        lp_minter_addr = ds~load_msg_addr();
         init? = true;
     }
 
@@ -32,12 +56,18 @@
         set_data(begin_cell()
             .store_coins(biton_balance)
             .store_coins(operation_price)
-            .store_coins(collect_fee)
-            .store_uint(a_service_fee, 10)
-            .store_uint(b_service_fee, 10)
-            .store_uint(max_price_percentage, 10)
+            .store_coins(service_collect_fee)
+            .store_uint(service_fee_percentage, 32)
+            .store_uint(a_service_fee, 32)
+            .store_uint(b_service_fee, 32)
+            .store_uint(max_price_percentage, 32)
             .store_slice(project_addr)
             .store_slice(jetton_addr)
+            .store_grams(lp_collect_fee)
+            .store_uint(lp_fee_percentage, 32)
+            .store_uint(lp_withdraw_comission, 32)
+            .store_slice(lp_jwall_addr)
+            .store_slice(lp_minter_addr)
             .end_cell()
         );
     }
