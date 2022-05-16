@@ -36,8 +36,8 @@ int, ;; return lp tokens
 int ;; return b 
 )
 math::add_lp(int a, int b) method_id {
-    init_data();
-    int b_need = division(a, get_price());
+    int c = get_price();
+    int b_need = division(a, c);
     int b_out = b - b_need;
     if ( b_out < 0 ) { return (-1, -1);}
     int lp_out = math::get_lp_value(a, b_need);
@@ -55,7 +55,7 @@ math::add_lp(int a, int b) method_id {
     int user_percent = division(a, lp_total_supply);
     int a_out = get_percent(get_balance().pair_first(), user_percent, 1000000000);
     int b_out = get_percent(biton_balance, user_percent, 1000000000);
-    int fee_out = get_percent(lp_collect_fee, user_percent);
+    int fee_out = get_percent(lp_collect_fee, user_percent, 1000000000);
     int linear_price = get_price();
     int b_in_a = division(b_out, linear_price);
     int withdraw_comission = get_percent(a_out + b_in_a, lp_withdraw_comission, 1000000000);

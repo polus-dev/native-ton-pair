@@ -1,2 +1,2 @@
 build:
-	@./build-v1.sh
+	@./build.sh

@@ -3,17 +3,14 @@
 #include "utils/storage.func";
 #include "utils/op-codes.func";
 #include "utils/exit-codes.func";
-#include "utils/msg-utils.func";
 #include "utils/get-methods.func";
+#include "utils/msg-utils.func";
 #include "utils/math.func";
 #include "utils/event.func";
 #include "utils/lp.func";
 #include "utils/admin-methods.func";
 #include "utils/user-methods.func";
 #include "utils/handles.func";
-
-
-
 
 
 () recv_internal(int balance, int msg_value, cell in_msg_cell, slice in_msg_body) impure {

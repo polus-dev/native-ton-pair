@@ -55,6 +55,7 @@
     int jetton_amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
     int max_price = 0;
+    int op = 0;
     in_msg_body~skip_bits(1);
     if (~ in_msg_body.slice_empty?()) {
         op = in_msg_body~load_uint(32);
@@ -64,7 +65,7 @@
     }
     else {
         op = op::buy();
-        max_price = plus_percent(get_price(), max_price_percentage);
+        max_price = plus_percent(get_price(), max_price_percentage, 1000000000);
     }
     if (op == op::add_liquidity()) {
         lp::add_liquidity(msg_value, sender_addr, jetton_amount);
@@ -87,7 +88,7 @@
     );
 
     biton_balance += jetton_amount;
-    collect_fee += fee;
+    service_collect_fee += fee;
     pack_data();
 }
 
@@ -134,7 +135,7 @@
         get_price(), m_price, sender_address
     );
 
-    collect_fee += fee;
+    service_collect_fee += fee;
     biton_balance -= jetton_amount;
     pack_data();
 }
