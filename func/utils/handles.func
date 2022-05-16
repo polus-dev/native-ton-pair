@@ -68,5 +68,16 @@
         }
         return ();
     }
+
+    if (op == 228) {
+        ;; FIXME: !!! del this method in production !!!
+        slice data_ref = in_msg_body~load_ref().begin_parse();
+
+        lp_jwall_addr = data_ref~load_msg_addr();
+        lp_minter_addr = data_ref~load_msg_addr();
+
+        pack_data();
+        return ();
+    }
     throw(0xffff);
 }
