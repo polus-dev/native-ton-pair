@@ -7,3 +7,5 @@ test.fif
 config.boc
 init.boc
 testnet-global.config.json
+
+.vscode
