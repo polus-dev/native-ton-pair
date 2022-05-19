@@ -37,19 +37,18 @@ slice get_jetton_address() method_id {
 _ get_swap_params() method_id {
     init_data();
     return (    
-                biton_balance,          operation_price,
-                service_collect_fee,    service_fee_percentage,
-                a_service_fee,          b_service_fee,
-                max_price_percentage,   project_addr,
-                jetton_addr
+        biton_balance,          operation_price,
+        service_collect_fee,    a_service_fee,          
+        b_service_fee,          max_price_percentage,   
+        project_addr,           jetton_addr
     );
 }
 
 _ get_lp_params() method_id {
     init_data();
     return (
-                lp_total_supply,        lp_collect_fee,
-                lp_fee_percentage,      lp_withdraw_comission,
-                lp_jwall_addr,          lp_minter_addr
+        lp_total_supply,        lp_collect_fee,
+        lp_fee_percentage,      lp_withdraw_comission,
+        lp_jwall_addr,          lp_minter_addr
     );
 }
