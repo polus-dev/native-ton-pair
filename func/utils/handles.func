@@ -19,6 +19,13 @@
         return ();
     }
 
+    if (op == op::excesses()) {
+        service_collect_fee += msg_value;
+        pack_data();
+        return ();
+    }
+
+
     if (op == op::add_liquidity()) {
         return ();
     }
