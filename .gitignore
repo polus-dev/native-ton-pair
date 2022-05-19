@@ -9,3 +9,5 @@ init.boc
 testnet-global.config.json
 
 .vscode
+
+node_modules

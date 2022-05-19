@@ -58,15 +58,6 @@ _ init_data() impure {
 
 
 _ pack_data() impure {
-    var lp_params = begin_cell()
-        .store_coins(lp_total_supply)   ;; max 124
-        .store_coins(lp_collect_fee)    ;; max 124
-        .store_uint(lp_fee_percentage, 32)      ;; 32
-        .store_uint(lp_withdraw_comission, 32)  ;; 32
-        .store_slice(lp_jwall_addr)     ;; 267 (addr_std only!)
-        .store_slice(lp_minter_addr)    ;; 267 (addr_std only!)
-        .end_cell();    ;; max total 846 bits
-    
     var swap_params = begin_cell()
         .store_coins(biton_balance)             ;; max 124 
         .store_coins(operation_price)           ;; max 124
@@ -74,10 +65,18 @@ _ pack_data() impure {
         .store_uint(a_service_fee, 32)          ;; 32
         .store_uint(b_service_fee, 32)          ;; 32
         .store_uint(max_price_percentage, 32)   ;; 32
-        .store_slice(project_addr)  ;; 267 (addr_std only!)
-        .store_slice(jetton_addr)   ;; 267 (addr_std only!)
+        .store_slice(project_addr)  ;; max 267 (if addr_std only!)
+        .store_slice(jetton_addr)   ;; max 267 (if addr_std only!)
         .end_cell();    ;; max total 1002 bits
 
+    var lp_params = begin_cell()
+        .store_coins(lp_total_supply)   ;; max 124
+        .store_coins(lp_collect_fee)    ;; max 124
+        .store_uint(lp_fee_percentage, 32)      ;; 32
+        .store_uint(lp_withdraw_comission, 32)  ;; 32
+        .store_slice(lp_jwall_addr)     ;; max 267 (if addr_std only!)
+        .store_slice(lp_minter_addr)    ;; max 267 (if addr_std only!)
+        .end_cell();    ;; max total 846 bits
 
     set_data(
         begin_cell()

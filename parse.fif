@@ -1,0 +1,23 @@
+"TonUtil.fif" include
+
+{ 1 i@+ swap not abort"Internal address expected"
+  1 i@+
+  1 i@+ swap { 4 u@+ swap u@+ nip } if
+  swap { 9 u@+ 32 } { 256 swap 8 } cond
+  i@+ rot u@+
+} : addr@+
+{ addr@+ drop } : addr@
+
+
+"dexdata.boc" file>B B>boc <s
+ref@+ drop
+ref@ <s // load lp_params
+
+Gram@+  swap ."lp_total_supply:         " . cr
+Gram@+  swap ."lp_collect_fee:          " . cr
+32 u@+  swap ."lp_fee_percentage:       " . cr 
+32 u@+  swap ."lp_withdraw_comission:   " . cr 
+
+// addr@+
+
+.s
