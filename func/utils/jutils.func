@@ -46,7 +46,7 @@ cell calculate_jetton_wallet_state_init() inline {
 
 slice calculate_jetton_wallet_address() inline {
   return begin_cell().store_uint(4, 3)
-                     .store_int(workchain(), 8)
+                     .store_int(0, 8)
                      .store_uint(cell_hash(calculate_jetton_wallet_state_init()), 256)
                      .end_cell()
                      .begin_parse();
