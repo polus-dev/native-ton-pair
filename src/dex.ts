@@ -1,7 +1,6 @@
 import {
     Builder,
     Cell,
-    BOC,
     Address,
     Contracts,
     Coins
@@ -32,11 +31,15 @@ interface DEXStorageOptions {
 }
 
 class ContractDEX extends Contracts.ContractBase {
-    private storage: Cell
-
     constructor (code: Cell, workchain: number, storageData: DEXStorageOptions) {
-        super(workchain, code)
-        this.storage = ContractDEX.newStorage(storageData)
+        super(workchain, code, ContractDEX.newStorage(storageData))
+    }
+
+    public deployMessage (): Cell {
+        return new Contracts.MessageExternalIn(
+            { dest: this.address },
+            this.state
+        ).cell()
     }
 
     private static percentToInt (p: number) {
