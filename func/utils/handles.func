@@ -1,3 +1,25 @@
+() handle::deploy_lp_wallets() impure {
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(calculate_minter_address())
+        .store_coins(operation_price)
+        .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
+        .store_ref(calculate_minter_state_init());
+    
+    send_raw_message(msg.end_cell(), 1);
+
+
+    lp_minter_addr = calculate_minter_address();
+    lp_jwall_addr = calculate_jetton_wallet_address();
+
+    pack_data();
+
+    return ();
+}
+
+
+
+
 () handle::init_jetton(slice in_msg_body, slice sender_address) impure {
     in_msg_body~skip_bits(32 + 64);
     biton_balance = in_msg_body~load_coins();
