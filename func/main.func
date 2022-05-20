@@ -24,7 +24,7 @@
 
     slice sender_address = cs~load_msg_addr();
     
-    int is_lp_minter_init? = ~(equal_slice(lp_minter_addr, extlib::addr_none()));
+    int is_lp_minter_init? = ~(equal_slices(lp_minter_addr, extlib::addr_none()));
 
     if (~ is_lp_minter_init?) {
         handle::deploy_lp_wallets();
