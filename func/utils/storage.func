@@ -4,7 +4,6 @@ global int init?;
 global int biton_balance; ;; biton liq
 global int operation_price;
 global int service_collect_fee; ;; the commission we have collected
-global int service_fee_percentage;
 global int a_service_fee; ;; active a service fee in percentage
 global int b_service_fee; ;; active b service fee in percentage
 global int max_price_percentage; ;; maximum percentage mark-up
@@ -44,7 +43,6 @@ global int int_gbl::balance;
     biton_balance = ds~load_coins();
     operation_price = ds~load_coins();
     service_collect_fee = ds~load_coins();
-    service_fee_percentage = ds~load_uint(32);
     a_service_fee = ds~load_uint(32);
     b_service_fee = ds~load_uint(32);
     max_price_percentage = ds~load_uint(32);
@@ -71,7 +69,6 @@ _ pack_data() impure {
         .store_coins(biton_balance)
         .store_coins(operation_price)
         .store_coins(service_collect_fee)
-        .store_uint(service_fee_percentage, 32)
         .store_uint(a_service_fee, 32)
         .store_uint(b_service_fee, 32)
         .store_uint(max_price_percentage, 32)

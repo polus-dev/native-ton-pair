@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/BITONdev/native-ton-pair#readme",
   "dependencies": {
-    "ton": "^11.6.1",
-    "ton-contract-executor": "^0.5.0"
+    "ton3": "^0.0.8"
   }
 }
