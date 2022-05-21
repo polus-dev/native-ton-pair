@@ -32,7 +32,8 @@ interface DEXStorageOptions {
 
 class ContractDEX extends Contracts.ContractBase {
     constructor (code: Cell, workchain: number, storageData: DEXStorageOptions) {
-        super(workchain, code, ContractDEX.newStorage(storageData))
+        const storage = ContractDEX.newStorage(storageData)
+        super(workchain, code, storage)
     }
 
     public deployMessage (): Cell {
@@ -43,7 +44,7 @@ class ContractDEX extends Contracts.ContractBase {
     }
 
     private static percentToInt (p: number) {
-        return Math.round(p * 1000000000)
+        return Math.round((p * 1000000000) / 100)
     }
 
     private static newStorage (options: DEXStorageOptions): Cell {
@@ -70,8 +71,8 @@ class ContractDEX extends Contracts.ContractBase {
         const storage = new Builder()
             .storeRef(swapParams.cell())
             .storeRef(lpParams.cell())
-            .storeRef(codeData.jettonMinterCode)
-            .storeRef(codeData.jettonWalletCode)
+            // .storeRef(codeData.jettonMinterCode)
+            // .storeRef(codeData.jettonWalletCode)
 
         return storage.cell()
     }

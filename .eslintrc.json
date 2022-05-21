@@ -32,6 +32,7 @@
         }
     },
     "rules": {
+        "no-plusplus": "off",
         "prefer-destructuring": "off",
         "no-multi-spaces": "off",
         "no-console": "off",
