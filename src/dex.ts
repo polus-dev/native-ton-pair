@@ -39,7 +39,7 @@ class ContractDEX extends Contracts.ContractBase {
     public deployMessage (): Cell {
         return new Contracts.MessageExternalIn(
             { dest: this.address },
-            this.state
+            { state: this.state }
         ).cell()
     }
 
@@ -71,8 +71,8 @@ class ContractDEX extends Contracts.ContractBase {
         const storage = new Builder()
             .storeRef(swapParams.cell())
             .storeRef(lpParams.cell())
-            // .storeRef(codeData.jettonMinterCode)
-            // .storeRef(codeData.jettonWalletCode)
+            .storeRef(codeData.jettonMinterCode)
+            .storeRef(codeData.jettonWalletCode)
 
         return storage.cell()
     }

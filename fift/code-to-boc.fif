@@ -2,7 +2,8 @@
 
 <{ SETCP0 ACCEPT
     "auto/main.func.code.fif" include PUSHREF SETCODE
-}>c 2 boc+>B "auto/main.func.code.boc" B>file
+}>c 
+2 boc+>B "auto/main.func.code.boc" B>file
 
 "lp-token/auto/btn-jwallet.func.code.fif" include
 2 boc+>B

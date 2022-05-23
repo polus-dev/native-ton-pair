@@ -43,6 +43,7 @@ async function waitForGrams (endpoint: string, address: Address): Promise<void> 
             // eslint-disable-next-line no-continue
             continue
         }
+        // console.log(`coins: ${resp.account.balance.coins}`)
         if (Number(resp.account.balance.coins) > 0) break
 
         await sleep(1 * 1000)
