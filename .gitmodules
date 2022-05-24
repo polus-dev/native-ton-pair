@@ -1,4 +1,0 @@
-[submodule "lp-token"]
-	path = lp-token
-	url = https://github.com/BITONdev/btn-token-smc.git
-    brahcn = "v0.1.0"

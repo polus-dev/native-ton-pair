@@ -1,19 +1,15 @@
 /* eslint-disable no-await-in-loop */
-import { Address, BOC, Coins, Mnemonic, Providers } from 'ton3'
-// import { Wallets } from 'ton3-contracts'
+import { Address, BOC, Coins, Providers } from 'ton3'
 import * as qr from 'qrcode-terminal'
-import * as fs from 'fs'
 import { ContractDEX } from '../src/dex'
 import { fileToCell, sleep, waitForGrams } from '../src/utils'
 
-
-// const TONHUB_V4_URL = 'https://sandbox-v4.tonhubapi.com'
 const TONHUB_V4_URL = 'https://sandbox-v4.tonhubapi.com'
 const TONCENTER_URL = 'https://sandbox.tonhubapi.com'
 
 const DEX_CODE = fileToCell('auto/main.func.code.boc')
-const J_MINTER_CODE = fileToCell('auto/btn-mint-ico.func.code.boc')
-const J_WALLET_CODE = fileToCell('auto/btn-jwallet.func.code.boc')
+const J_MINTER_CODE = fileToCell('token-contract/ft/build/jetton-minter.boc')
+const J_WALLET_CODE = fileToCell('token-contract/ft/build/jetton-wallet.boc')
 
 const PROJECT_ADDR = new Address('kQBb7sLNDjwMbwxUCqoGiV5gKmQMscLzlF2WPnpi8dMUcL9m')
 const WORKCHAIN = 0
@@ -33,8 +29,6 @@ async function main () {
             jettonWalletCode: J_WALLET_CODE
         }
     })
-    // const mnemonic = new Mnemonic()
-    // const dex = new Wallets.ContractWalletV3R2(0, mnemonic.keys.public)
 
     console.log(`dex address bounceable:        ${dex.address.toString('base64', { bounceable: true })}`)
     console.log(`dex address non-bounceable:    ${dex.address.toString('base64', { bounceable: false })}`)
@@ -43,21 +37,22 @@ async function main () {
 
     await waitForGrams(TONHUB_V4_URL, dex.address)
 
-    const provider = new Providers.ProviderRESTV2(TONCENTER_URL, { apiKey: 'eb7febb199841f9b20a7f6ca161be09918c71c753d210cb30a46996815d8ca4d' })
-    const client = await provider.client()
+    const client = await new Providers.ProviderRESTV2(
+        TONCENTER_URL,
+        { apiKey: 'eb7febb199841f9b20a7f6ca161be09918c71c753d210cb30a46996815d8ca4d' }
+    ).client()
 
-    const msgCell = dex.deployMessage()
-    console.log()
+    const deployCell = dex.deployMessage()
+
+    console.log('')
     for (let i = 0; i < 3; i++) {
         const bocResp = await client.sendBoc(
             null,
-            { boc: BOC.toBase64Standard(msgCell) }
+            { boc: BOC.toBase64Standard(deployCell) }
         )
         console.log(bocResp.data.result)
         await sleep(400)
     }
-
-    // fs.writeFileSync('init.boc', BOC.toBytesStandard(dex.deployMessage()))
 }
 
 if (require.main === module) { main() }

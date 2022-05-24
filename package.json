@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha './test/**/*.test.ts' --require ts-node/register",
-    "deploy": "npx ts-node scripts/deploy.ts"
+    "deploy": "npx ts-node scripts/deploy.ts",
+    "add-lq": "npx ts-node scripts/add-lq.ts"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.1.0",
     "@types/qrcode-terminal": "^0.12.0",
+    "@types/qs": "^6.9.7",
     "@types/sinon": "^10.0.11",
     "chai": "^4.3.6",
     "eslint": "^8.10.0",
@@ -38,6 +40,7 @@
   "dependencies": {
     "fs": "^0.0.1-security",
     "qrcode-terminal": "^0.12.0",
+    "qs": "^6.10.3",
     "ton": "^11.12.0",
     "ton3": "^0.0.9"
   }

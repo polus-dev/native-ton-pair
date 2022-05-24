@@ -3,7 +3,7 @@
         .store_uint(0x18, 6)
         .store_slice(calculate_minter_address())
         .store_coins(operation_price)
-        .store_uint(4 + 2 + 1, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)
+        .store_uint(6, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)  ;; ...110
         .store_ref(calculate_minter_state_init());
     
     send_raw_message(msg.end_cell(), 1);
