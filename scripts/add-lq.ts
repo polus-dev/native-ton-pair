@@ -17,7 +17,7 @@ function init (): IArgs {
         dexAddress: new Address(args[0]),
         jAddress: new Address(args[1]),
         prop: parseFloat(args[2]),
-        ton: parseInt(args[3], 10)
+        ton: Number(new Coins(parseInt(args[3], 10)).toNano())
     }
 }
 
@@ -26,7 +26,7 @@ function main () {
     console.log(`initdata.ton:  ${initdata.ton}`)
     console.log(`initdata.prop: ${initdata.prop}`)
 
-    const fwdjetton = Math.floor((initdata.ton / initdata.prop) * 1000000000)
+    const fwdjetton = Math.round((initdata.ton / initdata.prop) * 1000000000)
     console.log(`fwdjetton:     ${fwdjetton}`)
 
     const body = new Builder()
@@ -36,7 +36,7 @@ function main () {
         .storeAddress(initdata.dexAddress)          // destination
         .storeAddress(initdata.dexAddress)          // response_destination
         .storeBit(0)                                // custom_payload
-        .storeCoins(new Coins(initdata.ton))        // forward_ton_amount
+        .storeCoins(new Coins(initdata.ton, true))  // forward_ton_amount
         .storeBit(1)                                // forward_payload (Either bit)
         .storeRef(new Builder().storeUint(1002, 32).cell())
         .cell()
@@ -49,7 +49,7 @@ function main () {
                 + '?'
                 + qs.stringify({
                     text: 'add liquidity',
-                    amount: new Coins(0.2).add(new Coins(initdata.ton)).toNano(),
+                    amount: new Coins(0.2).add(new Coins(initdata.ton, true)).toNano(),
                     bin: bodyBOC
                 })
 

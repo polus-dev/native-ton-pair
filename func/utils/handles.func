@@ -34,6 +34,7 @@
         usr::buy_biton(msg_value, sender_address, in_msg_body);
         return ();
     }
+
     int op = in_msg_body~load_uint(32);
 
     if (op == op::buy()) {
@@ -44,11 +45,6 @@
     if (op == op::excesses()) {
         service_collect_fee += msg_value;
         pack_data();
-        return ();
-    }
-
-
-    if (op == op::add_liquidity()) {
         return ();
     }
 

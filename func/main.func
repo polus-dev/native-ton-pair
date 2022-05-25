@@ -37,16 +37,18 @@
         return ();
     }
 
-
     if (equal_slices(sender_address, project_addr)) {
         handle::admin_methods(in_msg_body);
         return ();
     }
-    if (equal_slices(sender_address, lp_jwall_addr)) & (in_msg_body~load_uint(32) == op::transfer_notification()) {
-        lp::del_liquidity(in_msg_body);
+
+    if (equal_slices(sender_address, lp_jwall_addr)) {
+        if (in_msg_body~load_uint(32) == op::transfer_notification()) {
+            lp::del_liquidity(in_msg_body);
+            return ();
+        }
         return ();
-    }
-    else {
+    } else {
         handle::user_methods(sender_address, msg_value, in_msg_body);
         return ();
     }

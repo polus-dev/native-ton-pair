@@ -19,11 +19,7 @@
     send_raw_message(refund_msg.end_cell(), 0);
 }
 
-
-
-
-
-() lp::add_liquidity(int msg_value, slice sender_addr, int jetton_amount) impure {
+() lp::add_liquidity(int msg_value, slice sender_addr, int jetton_amount) impure inline_ref {
     init_data();
     int biton_out = 0;
     int lp_out = 0;

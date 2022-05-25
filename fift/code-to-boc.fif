@@ -5,10 +5,10 @@
 }>c 
 2 boc+>B "auto/main.func.code.boc" B>file
 
-"lp-token/auto/btn-jwallet.func.code.fif" include
-2 boc+>B
-"auto/btn-jwallet.func.code.boc" B>file
+// "lp-token/auto/btn-jwallet.func.code.fif" include
+// 2 boc+>B
+// "auto/btn-jwallet.func.code.boc" B>file
 
-"lp-token/auto/btn-mint-ico.func.code.fif" include
-2 boc+>B
-"auto/btn-mint-ico.func.code.boc" B>file
+// "lp-token/auto/btn-mint-ico.func.code.fif" include
+// 2 boc+>B
+// "auto/btn-mint-ico.func.code.boc" B>file

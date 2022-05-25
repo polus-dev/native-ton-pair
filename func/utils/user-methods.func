@@ -56,17 +56,19 @@
     slice sender_addr = in_msg_body~load_msg_addr();
     int max_price = 0;
     int op = 0;
-    in_msg_body~skip_bits(1);
-    if (~ in_msg_body.slice_empty?()) {
-        op = in_msg_body~load_uint(32);
-        if (op == op::buy()) {
-            max_price = in_msg_body~load_grams();
-        }
-    }
-    else {
+
+    slice fwd_payload = in_msg_body~load_int(1) 
+        ? in_msg_body~load_ref().begin_parse()
+        : in_msg_body;
+    
+    if (fwd_payload.slice_data_empty?()) {
         op = op::buy();
         max_price = plus_percent(get_price(), max_price_percentage, 1000000000);
+    } else {
+        op = fwd_payload~load_uint(32);
+        if (op == op::buy()) { max_price = fwd_payload~load_grams(); }
     }
+
     if (op == op::add_liquidity()) {
         lp::add_liquidity(msg_value, sender_addr, jetton_amount);
         return ();
