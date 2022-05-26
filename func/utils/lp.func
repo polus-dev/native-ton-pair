@@ -1,4 +1,4 @@
-() lp::send_back(int msg_value, int jetton_amount, slice sender_addr) impure {
+() lp::send_back(int msg_value, int jetton_amount, slice sender_addr) impure inline_ref {
     var refund_body = begin_cell()
         .store_uint(op::transfer(), 32) ;; op
         .store_uint(cur_lt(), 64) ;; query id
@@ -92,7 +92,7 @@
     return ();
 }
 
-() lp::del_liquidity(slice in_msg_body) impure {
+() lp::del_liquidity(slice in_msg_body) impure inline_ref {
     init_data();
     in_msg_body~skip_bits(64); ;; query_id
     int amount = in_msg_body~load_coins();
