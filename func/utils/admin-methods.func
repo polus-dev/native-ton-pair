@@ -1,15 +1,15 @@
 () adm::withdraw_fee() impure {
     init_data();
-    throw_if(err::small_fee(), collect_fee == 0);
+    throw_if(err::small_fee(), service_collect_fee == 0);
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
-        .store_coins(collect_fee)
+        .store_coins(service_collect_fee)
         .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_uint(0, 32)
         .store_slice(msg::withdraw_fee());
     send_raw_message(msg.end_cell(), 2);
-    collect_fee = 0;
+    service_collect_fee = 0;
     pack_data();
 }
 

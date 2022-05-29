@@ -1,2 +1,3 @@
 build:
-	@./build-v1.sh
+	@./build.sh
+	@fift -s fift/code-to-boc.fif

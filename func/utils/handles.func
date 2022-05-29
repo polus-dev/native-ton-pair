@@ -1,3 +1,59 @@
+(
+    int,    ;; op
+    slice,  ;; sender addr
+    int,    ;; jetton amount
+    int     ;; max price
+) handle::parse_transfer_body(slice in_msg_body) {
+    in_msg_body~skip_bits(64); ;; query id
+    int jetton_amount = in_msg_body~load_coins();
+    slice sender_addr = in_msg_body~load_msg_addr();
+
+    int op = 0;
+    int max_price = 0;
+
+    slice fwd_payload = in_msg_body~load_int(1) ;; if we have 1 -> load_ref
+        ? in_msg_body~load_ref().begin_parse()
+        : in_msg_body;
+
+
+
+    if (fwd_payload.slice_data_empty?()) {
+        op = op::buy();
+        max_price = plus_percent(get_price(), max_price_percentage, 1000000000);
+    }
+    else {
+        op = fwd_payload~load_uint(32);
+        if (op == op::buy()) { max_price = fwd_payload~load_grams(); }
+    }
+
+    return (op, sender_addr, jetton_amount, max_price);
+}
+
+
+
+
+() handle::deploy_lp_wallets() impure {
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(calculate_minter_address())
+        .store_coins(operation_price)
+        .store_uint(6, 1 + 4 + 4 + 64 + 32 + 1 + 1 + 1)  ;; ...110
+        .store_ref(calculate_minter_state_init());
+    
+    send_raw_message(msg.end_cell(), 1);
+
+
+    lp_minter_addr = calculate_minter_address();
+    lp_jwall_addr = calculate_jetton_wallet_address();
+
+    pack_data();
+
+    return ();
+}
+
+
+
+
 () handle::init_jetton(slice in_msg_body, slice sender_address) impure {
     in_msg_body~skip_bits(32 + 64);
     biton_balance = in_msg_body~load_coins();
@@ -12,6 +68,7 @@
         usr::buy_biton(msg_value, sender_address, in_msg_body);
         return ();
     }
+
     int op = in_msg_body~load_uint(32);
 
     if (op == op::buy()) {
@@ -19,13 +76,23 @@
         return ();
     }
 
-    if (op == op::add_liquidity()) {
+    if (op == op::excesses()) {
+        service_collect_fee += msg_value;
+        pack_data();
         return ();
     }
 
     if (op == op::transfer_notification()) {
         throw_unless(err::fake_addr(), equal_slices(jetton_addr, sender_address));
-        usr::buy_ton(msg_value, in_msg_body);
+
+        (int op, slice sender_addr, int jetton_amount, int max_price) = handle::parse_transfer_body(in_msg_body);
+
+        if (op == op::buy()) {
+            usr::buy_ton(msg_value, sender_addr, jetton_amount, max_price);
+        }
+        if (op == op::add_liquidity()) {
+            lp::add_liquidity(msg_value, sender_addr, jetton_amount);
+        }
         return ();
     }
     throw(0xffff);
@@ -38,7 +105,6 @@
     if (op == 0) {
         if (equal_slices(response::withdraw_fee(), in_msg_body)) {
             adm::withdraw_fee();
-
         }
         return ();
     }
@@ -54,19 +120,6 @@
         return ();
     }
     
-    if (op == op::add_liquidity()) {
-        return ();
-    }
 
-    if (op == op::withdraw_liquidity()) {
-        int curr = in_msg_body~load_uint(1);
-        if (curr == 0) {
-            adm::withdraw_biton(in_msg_body);
-        }
-        else {
-            adm::withdraw_ton(in_msg_body);
-        }
-        return ();
-    }
     throw(0xffff);
 }

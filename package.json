@@ -1,0 +1,47 @@
+{
+  "name": "native-ton-pair",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha './test/**/*.test.ts' --require ts-node/register",
+    "deploy": "npx ts-node scripts/deploy.ts",
+    "add-lq": "npx ts-node scripts/add-lq.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BITONdev/native-ton-pair.git"
+  },
+  "author": "BITON",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BITONdev/native-ton-pair/issues"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^9.1.0",
+    "@types/qrcode-terminal": "^0.12.0",
+    "@types/qs": "^6.9.7",
+    "@types/sinon": "^10.0.11",
+    "chai": "^4.3.6",
+    "eslint": "^8.10.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^16.1.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.25.4",
+    "mocha": "^9.2.1",
+    "nyc": "^15.1.0",
+    "sinon": "^13.0.1",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2"
+  },
+  "homepage": "https://github.com/BITONdev/native-ton-pair#readme",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "qrcode-terminal": "^0.12.0",
+    "qs": "^6.10.3",
+    "ton": "^11.12.0",
+    "ton3": "^0.0.9"
+  }
+}

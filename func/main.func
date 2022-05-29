@@ -1,3 +1,19 @@
+#include "lib/stdlib.func";
+#include "lib/extlib.func";
+#include "utils/storage.func";
+#include "utils/op-codes.func";
+#include "utils/exit-codes.func";
+#include "utils/get-methods.func";
+#include "utils/msg-utils.func";
+#include "utils/math.func";
+#include "utils/event.func";
+#include "utils/lp.func";
+#include "utils/admin-methods.func";
+#include "utils/user-methods.func";
+#include "utils/jutils.func";
+#include "utils/handles.func";
+
+
 () recv_internal(int balance, int msg_value, cell in_msg_cell, slice in_msg_body) impure {
     int_gbl::balance = balance;
     init_data();
@@ -7,7 +23,13 @@
     throw_if(0, cs~load_uint(4) & 1); ;; ignore bounce
 
     slice sender_address = cs~load_msg_addr();
+    
+    int is_lp_minter_init? = ~(equal_slices(lp_minter_addr, extlib::addr_none()));
 
+    if (~ is_lp_minter_init?) {
+        handle::deploy_lp_wallets();
+        return ();
+    }
 
     int is_jetton_init? = ~(equal_slices(jetton_addr, extlib::addr_none()));
     if (~ is_jetton_init?) {
@@ -15,12 +37,18 @@
         return ();
     }
 
-
-    if(equal_slices(sender_address, project_addr)) {
+    if (equal_slices(sender_address, project_addr)) {
         handle::admin_methods(in_msg_body);
         return ();
     }
-    else {
+
+    if (equal_slices(sender_address, lp_jwall_addr)) {
+        if (in_msg_body~load_uint(32) == op::transfer_notification()) {
+            lp::del_liquidity(in_msg_body);
+            return ();
+        }
+        return ();
+    } else {
         handle::user_methods(sender_address, msg_value, in_msg_body);
         return ();
     }

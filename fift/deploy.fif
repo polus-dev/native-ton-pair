@@ -30,14 +30,24 @@ $6 parse-int =: workchain-id
 }>c =: code
 
 <b
-    0 Gram,                 // biton_balance
-    operation-price Gram,   // operation_price
-    0 Gram,                 // collect_fee
-    a-service-fee 10 u,         // a-service-fee
-    b-service-fee 10 u,         // b-service-fee
-    max-price-percentage 10 u,  // max-price-percentage
-    project-addr Addr,      // project_addr
-    b{00} s,                // jetton_addr (addr-none)
+    <b  // swap_params
+        0 Gram,                     // biton_balance
+        operation-price Gram,       // operation_price
+        0 Gram,                     // service_collect_fee
+        a-service-fee 32 u,         // a-service-fee
+        b-service-fee 32 u,         // b-service-fee
+        max-price-percentage 10 u,  // max-price-percentage
+        project-addr Addr,          // project_addr
+        b{00} s,                    // jetton_addr (addr-none)
+    b> ref,
+    <b  // lp_params
+        0 Gram,         // lp_total_supply
+        0 Gram,         // lp_collect_fee
+        10000000 32 u,  // lp_fee_percentage
+        10000000 32 u,  // lp_withdraw_comission
+        b{00} s,        // lp_jwall_addr
+        b{00} s,        // lp_minter_addr
+    b> ref,
 b>  =: init-storage
 
 <b

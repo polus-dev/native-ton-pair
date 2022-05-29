@@ -1,0 +1,53 @@
+cell pack_jetton_minter_data() inline {
+    return begin_cell()
+        .store_coins(0) ;; total supply
+        .store_slice(my_address()) ;; admin address
+        .store_ref(begin_cell().end_cell()) ;; content
+        .store_ref(jetton_wallet_code) ;; jwall_code
+    .end_cell();
+}
+
+cell pack_jetton_wallet_data() inline {
+   return  begin_cell()
+            .store_coins(0)
+            .store_slice(my_address())
+            .store_slice(lp_minter_addr)
+            .store_ref(jetton_wallet_code)
+    .end_cell();
+}
+
+cell calculate_minter_state_init() inline {
+    return begin_cell()
+        .store_uint(0, 2)
+        .store_dict(jetton_minter_code)
+        .store_dict(pack_jetton_minter_data())
+        .store_uint(0, 1)
+    .end_cell();
+}
+
+slice calculate_minter_address() inline {
+    return begin_cell()
+        .store_uint(4, 3)
+        .store_int(0, 8)
+        .store_uint(cell_hash(calculate_minter_state_init()), 256)
+        .end_cell()
+        .begin_parse();
+}
+
+
+cell calculate_jetton_wallet_state_init() inline {
+  return begin_cell()
+          .store_uint(0, 2)
+          .store_dict(jetton_wallet_code)
+          .store_dict(pack_jetton_wallet_data())
+          .store_uint(0, 1)
+         .end_cell();
+}
+
+slice calculate_jetton_wallet_address() inline {
+  return begin_cell().store_uint(4, 3)
+                     .store_int(0, 8)
+                     .store_uint(cell_hash(calculate_jetton_wallet_state_init()), 256)
+                     .end_cell()
+                     .begin_parse();
+}
