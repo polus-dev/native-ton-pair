@@ -76,7 +76,7 @@ math::add_lp(int a, int b) method_id {
     init_data();
     int reserve_a_initial = pair_first(get_balance()) - service_collect_fee - lp_collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
-    int fee = division(multiply(amount_traded, a_service_fee), 1000);
+    int fee = division(multiply(amount_traded, a_service_fee), 1000000000);
     int amount_input = amount_traded - fee; ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_b_after_execution = division(k, reserve_a_initial + amount_input);
@@ -98,7 +98,7 @@ math::add_lp(int a, int b) method_id {
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_a_after_execution = division(k, reserve_b_initial + amount_input);
     int amount_out = reserve_a_initial - reserve_a_after_execution;
-    int fee = division(multiply(amount_out, b_service_fee), 1000);
+    int fee = division(multiply(amount_out, b_service_fee), 1000000000);
     amount_out -= fee;
     int market_price = division(amount_input, amount_out);
     return (amount_out, market_price, fee);

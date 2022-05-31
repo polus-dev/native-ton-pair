@@ -31,17 +31,18 @@
         (lp_out, biton_out) = math::add_lp(msg_value, jetton_amount);
     }
     if (biton_out == -1) {
-            lp::send_back(msg_value, jetton_amount, sender_addr);
-            return ();
+        lp::send_back(msg_value, jetton_amount, sender_addr);
+        return ();
     }
-    var master_msg = begin_cell()
+
+    cell master_msg = begin_cell()
         .store_uint(op::internal_transfer(), 32)
         .store_uint(0, 64) ;; query_id
         .store_coins(lp_out)
         .store_slice(lp_minter_addr) ;; from_address
         .store_slice(my_address()) ;; response_address
-        .store_coins(0) ;; no forward_amount
-        .store_uint(0, 1) ;; forward_payload in this slice, not separate cell
+        .store_coins(0)     ;; no forward_amount
+        .store_uint(0, 1)   ;; forward_payload in this slice, not separate cell
         .end_cell();
 
     cell mint_body = begin_cell()
@@ -52,7 +53,7 @@
         .store_ref(master_msg)
         .end_cell();
 
-    var mint_msg = begin_cell()
+    builder mint_msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(lp_minter_addr)
         .store_coins(operation_price)
@@ -63,7 +64,7 @@
     lp_total_supply += lp_out;
 
     if (biton_out > 500000000) {
-        var refund_body = begin_cell()
+        builder refund_body = begin_cell()
             .store_uint(op::transfer(), 32)
             .store_uint(cur_lt(), 64)
             .store_coins(biton_out)
@@ -72,7 +73,8 @@
             .store_uint(0, 1)
             .store_coins(0)
             .store_uint(0, 1);
-        var refund_msg = begin_cell()
+
+        builder refund_msg = begin_cell()
             .store_uint(0x18, 6)
             .store_slice(jetton_addr)
             .store_coins(operation_price)
@@ -80,7 +82,10 @@
             .store_ref(refund_body.end_cell());
         send_raw_message(refund_msg.end_cell(), 0);
     }
-    var event_body = begin_cell()
+
+    biton_balance += (jetton_amount - biton_out);
+
+    builder event_body = begin_cell()
         .store_uint(op::add_liquidity(), 32)
         .store_slice(sender_addr)
         .store_coins(msg_value)
@@ -88,6 +93,7 @@
         .store_coins(biton_out);
 
     event::emit(sender_addr, event_body.end_cell());
+    
     pack_data();
     return ();
 }
@@ -99,7 +105,7 @@
     slice sender_addr = in_msg_body~load_msg_addr();
     (int ton_out, int biton_out, int collect_fee, int service_fee) = math::del_lp(amount);
 
-    var transfer_body = begin_cell()
+    builder transfer_body = begin_cell()
         .store_uint(op::transfer(), 32) ;; op
         .store_uint(cur_lt(), 64) ;; query id
         .store_coins(biton_out) ;; amount
@@ -109,7 +115,7 @@
         .store_coins(ton_out + collect_fee) ;; forward ton amount
         .store_uint(0, 1); ;; forward payload
 
-    var transfer_msg = begin_cell()
+    builder transfer_msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
         .store_coins(ton_out + collect_fee + operation_price)
@@ -117,13 +123,14 @@
         .store_ref(transfer_body.end_cell());
     send_raw_message(transfer_msg.end_cell(), 0);
 
-    var burn_body = begin_cell()
+    builder burn_body = begin_cell()
         .store_uint(op::burn(), 32) ;; op
         .store_uint(cur_lt(), 64) ;; query id
         .store_coins(amount) ;; amount
         .store_slice(my_address()) ;; response destination
         .store_uint(0, 1); ;; custom payload
-    var burn_msg = begin_cell()
+
+    builder burn_msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(lp_jwall_addr)
         .store_coins(operation_price)
@@ -131,7 +138,7 @@
         .store_ref(burn_body.end_cell());
     send_raw_message(burn_msg.end_cell(), 0);
 
-    var log_body = begin_cell()
+    builder log_body = begin_cell()
         .store_uint(op::remove_liq(), 32) ;; withdrawal of some liquidity
         .store_slice(sender_addr) ;; who
         .store_coins(amount) ;; lp tokens amount
