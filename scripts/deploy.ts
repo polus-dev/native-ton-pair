@@ -8,8 +8,8 @@ const TONHUB_V4_URL = 'https://sandbox-v4.tonhubapi.com'
 const TONCENTER_URL = 'https://sandbox.tonhubapi.com'
 
 const DEX_CODE = fileToCell('auto/main.func.code.boc')
-const J_MINTER_CODE = fileToCell('token-contract/ft/build/jetton-minter.boc')
-const J_WALLET_CODE = fileToCell('token-contract/ft/build/jetton-wallet.boc')
+const J_MINTER_CODE = fileToCell('auto/jetton-minter.code.boc')
+const J_WALLET_CODE = fileToCell('auto/jetton-wallet.code.boc')
 
 const PROJECT_ADDR = new Address('kQDKRsElJBTb382QDHYdyOTeQmV-LrP41u1wjfZ70L-XOU6h')
 const WORKCHAIN = 0

@@ -3,6 +3,9 @@
 !auto/.gitkeep
 auto/*
 
+lp-token/auto/*
+!lp-token/auto/.gitkeep
+
 test.fif
 config.boc
 init.boc
