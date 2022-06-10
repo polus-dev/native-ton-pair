@@ -6,12 +6,12 @@
     builder msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(user_addr)
-        .store_coins(0)
+        .store_coins(50000000)
         .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_uint(0, 32)
         .store_slice(ntext);
 
-    send_raw_message(msg.end_cell(), 1);
+    send_raw_message(msg.end_cell(), 0);
 
     builder event_body = begin_cell()
         .store_int(dst, 1)
@@ -61,15 +61,13 @@
     }
 
     throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
-
-
+    ;; FIXME
+    ton_amount -= 50000000;  ;; 0,05 ton for notify
     var msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(sender_addr)
         .store_coins(ton_amount)
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .store_uint(0, 32)
-        .store_slice(msg::biton_to_ton());
+        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
     
     send_raw_message(msg.end_cell(), 0);
 
@@ -87,8 +85,11 @@
 
 () usr::buy_biton(int msg_value, slice sender_address, slice in_msg_body) impure {
     init_data();
+
+
+    ;; FIXME
+    msg_value -= 50000000;  ;; 0,05 ton for notify
     msg_value -= operation_price;
-    msg_value -= 15000000; ;; 0,015 ton(notification)
     throw_if(err::small_trans(), msg_value <= 500000000);
     (int jetton_amount, int m_price, int fee) = get_price_biton(msg_value);
 
@@ -119,7 +120,7 @@
         ;; last bit in 107 bits is "1", mean that body:(Either X ^X) in ref
         .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_ref(msg_body);
-    send_raw_message(msg.end_cell(), 1);
+    send_raw_message(msg.end_cell(), 0);
 
     usr::notify(
         msg::ton_to_biton(), event_op::tonjetton(),

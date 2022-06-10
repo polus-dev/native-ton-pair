@@ -12,7 +12,7 @@
     var refund_msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
-        .store_coins(operation_price)
+        .store_coins(msg_value)
         .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_ref(refund_body.end_cell());
 
@@ -21,6 +21,9 @@
 
 () lp::add_liquidity(int msg_value, slice sender_addr, int jetton_amount) impure inline_ref {
     init_data();
+    ;;  FIXME
+    msg_value -= 50000000; ;; for notification
+    msg_value -= operation_price;
     int biton_out = 0;
     int lp_out = 0;
     if (lp_total_supply == 0) {
@@ -33,6 +36,28 @@
     if (biton_out == -1) {
         lp::send_back(msg_value, jetton_amount, sender_addr);
         return ();
+    }
+
+
+    if (biton_out > 500000000) {
+        msg_value -= operation_price;
+        builder refund_body = begin_cell()
+            .store_uint(op::transfer(), 32)
+            .store_uint(cur_lt(), 64)
+            .store_coins(biton_out)
+            .store_slice(sender_addr)
+            .store_slice(my_address())
+            .store_uint(0, 1)
+            .store_coins(0)
+            .store_uint(0, 1);
+
+        builder refund_msg = begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(jetton_addr)
+            .store_coins(operation_price)
+            .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+            .store_ref(refund_body.end_cell());
+        send_raw_message(refund_msg.end_cell(), 0);
     }
 
     cell master_msg = begin_cell()
@@ -63,25 +88,6 @@
     send_raw_message(mint_msg.end_cell(), 0);
     lp_total_supply += lp_out;
 
-    if (biton_out > 500000000) {
-        builder refund_body = begin_cell()
-            .store_uint(op::transfer(), 32)
-            .store_uint(cur_lt(), 64)
-            .store_coins(biton_out)
-            .store_slice(sender_addr)
-            .store_slice(my_address())
-            .store_uint(0, 1)
-            .store_coins(0)
-            .store_uint(0, 1);
-
-        builder refund_msg = begin_cell()
-            .store_uint(0x18, 6)
-            .store_slice(jetton_addr)
-            .store_coins(operation_price)
-            .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-            .store_ref(refund_body.end_cell());
-        send_raw_message(refund_msg.end_cell(), 0);
-    }
 
     biton_balance += (jetton_amount - biton_out);
 
@@ -103,7 +109,11 @@
     in_msg_body~skip_bits(64); ;; query_id
     int amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
-    (int ton_out, int biton_out, int collect_fee, int service_fee) = math::del_lp(amount);
+    (int ton_out, int biton_out, int collect_fee) = math::del_lp(amount);
+
+    ;; for notification & transfers FIXME
+    ton_out -= (operation_price * 2);
+    ton_out -= 50000000;
 
     builder transfer_body = begin_cell()
         .store_uint(op::transfer(), 32) ;; op
@@ -147,7 +157,6 @@
 
     event::emit(sender_addr, log_body.end_cell());
 
-    service_collect_fee += service_fee;
     lp_total_supply -= amount;
     biton_balance -= biton_out;
     pack_data();

@@ -48,7 +48,7 @@ _ get_lp_params() method_id {
     init_data();
     return (
         lp_total_supply,        lp_collect_fee,
-        lp_fee_percentage,      lp_withdraw_comission,
+        lp_fee_percentage,
         lp_jwall_addr,          lp_minter_addr
     );
 }

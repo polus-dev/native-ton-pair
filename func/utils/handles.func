@@ -24,6 +24,7 @@
     else {
         op = fwd_payload~load_uint(32);
         if (op == op::buy()) { max_price = fwd_payload~load_grams(); }
+        if (op == op::routing()) { sender_addr = fwd_payload~load_msg_addr();}
     }
 
     return (op, sender_addr, jetton_amount, max_price);
@@ -46,6 +47,9 @@
     lp_minter_addr = calculate_minter_address();
     lp_jwall_addr = calculate_jetton_wallet_address();
 
+
+    jetton_minter_code = begin_cell().end_cell();
+    jetton_wallet_code = begin_cell().end_cell();
     pack_data();
 
     return ();
