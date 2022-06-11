@@ -1,3 +1,5 @@
+
+;; withdraw dex fee(admin fee)
 () adm::withdraw_fee() impure {
     init_data();
     throw_if(err::small_fee(), service_collect_fee == 0);
@@ -13,40 +15,7 @@
     pack_data();
 }
 
-
-() adm::withdraw_biton(slice in_msg_body) impure {
-    init_data();
-    int amount = in_msg_body~load_coins();
-    var msg_body = begin_cell()
-        .store_uint(op::transfer(), 32)
-        .store_uint(cur_lt(), 64)
-        .store_coins(amount)
-        .store_slice(project_addr) ;; destination 
-        .end_cell();
-    throw_if(err::no_balance(), amount > biton_balance);
-    var msg = begin_cell()
-        .store_uint(0x18, 6)
-        .store_slice(jetton_addr)
-        .store_coins(500000000)
-        .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
-        .store_ref(msg_body);
-    send_raw_message(msg.end_cell(), 3);
-    biton_balance -= amount;
-    pack_data();
-}
-
-() adm::withdraw_ton(slice in_msg_body) impure {
-    init_data();
-    int amount = in_msg_body~load_coins();
-    throw_if(err::no_balance(), amount > int_gbl::balance);
-    var msg = begin_cell()
-        .store_uint(0x18, 6)
-        .store_slice(project_addr)
-        .store_coins(amount)
-        .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1);
-    send_raw_message(msg.end_cell(), 3);
-}
-
+;; change operation price for messages
 () adm::change_operation_price(slice in_msg_body) impure {
     init_data();
     operation_price = in_msg_body~load_coins();
@@ -54,6 +23,7 @@
     return ();
 }
 
+;; change service fee for swaps
 () adm::change_service_fee(slice in_msg_body) impure {
     init_data();
     a_service_fee = in_msg_body~load_uint(10);

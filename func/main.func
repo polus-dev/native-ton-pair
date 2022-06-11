@@ -24,31 +24,34 @@
 
     slice sender_address = cs~load_msg_addr();
     
-    int is_lp_minter_init? = ~(equal_slices(lp_minter_addr, extlib::addr_none()));
 
-    if (~ is_lp_minter_init?) {
-        handle::deploy_lp_wallets();
+    ;; check if minter init or not
+    int is_lp_minter_init? = ~(equal_slices(lp_minter_addr, extlib::addr_none()));
+    ;; if not
+    ifnot(is_lp_minter_init?) {
+        handle::deploy_lp_wallets(); ;; we deploy lp minter and lp jetton wallet
         return ();
     }
-
+    ;; check deploy jetton or not FIX ME
     int is_jetton_init? = ~(equal_slices(jetton_addr, extlib::addr_none()));
     if (~ is_jetton_init?) {
+        ;; accept jettons
         handle::init_jetton(in_msg_body, sender_address);
         return ();
     }
-
+    ;; if we receive message from admin address we do admin methods
     if (equal_slices(sender_address, project_addr)) {
         handle::admin_methods(in_msg_body);
         return ();
     }
-
+    ;; if we receive message from lp jetton wallet it`s means we should remove some liquidity
     if (equal_slices(sender_address, lp_jwall_addr)) {
         if (in_msg_body~load_uint(32) == op::transfer_notification()) {
             lp::del_liquidity(in_msg_body);
             return ();
         }
         return ();
-    } else {
+    } else { ;; run user methods
         handle::user_methods(sender_address, msg_value, in_msg_body);
         return ();
     }

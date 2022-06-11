@@ -1,13 +1,15 @@
+
+;; method for send back jettons if proportion was changed
 () lp::send_back(int msg_value, int jetton_amount, slice sender_addr) impure inline_ref {
     var refund_body = begin_cell()
-        .store_uint(op::transfer(), 32) ;; op
-        .store_uint(cur_lt(), 64) ;; query id
-        .store_coins(jetton_amount) ;; amount
-        .store_slice(sender_addr) ;; destination
-        .store_slice(my_address()) ;; response destination
-        .store_uint(0, 1) ;; custom payload
-        .store_coins(msg_value - operation_price) ;; forward ton amount
-        .store_uint(0, 1); ;; forward payload
+        .store_uint(op::transfer(), 32)             ;; op
+        .store_uint(cur_lt(), 64)                   ;; query id
+        .store_coins(jetton_amount)                 ;; amount
+        .store_slice(sender_addr)                   ;; destination
+        .store_slice(my_address())                  ;; response destination
+        .store_uint(0, 1)                           ;; custom payload
+        .store_coins(msg_value - operation_price)   ;; forward ton amount
+        .store_uint(0, 1);                          ;; forward payload
 
     var refund_msg = begin_cell()
         .store_uint(0x18, 6)
@@ -22,23 +24,23 @@
 () lp::add_liquidity(int msg_value, slice sender_addr, int jetton_amount) impure inline_ref {
     init_data();
     ;;  FIXME
-    msg_value -= 50000000; ;; for notification
-    msg_value -= operation_price;
+    msg_value -= 50000000;          ;; for notification
+    msg_value -= operation_price;   ;; for jettons transfers
     int biton_out = 0;
     int lp_out = 0;
-    if (lp_total_supply == 0) {
+    if (lp_total_supply == 0) { ;; if it`s first liquidity, we should ignore proportion 
         lp_out = math::get_lp_value(msg_value, jetton_amount);
         biton_out = 0;
     }
-    else {
+    else { ;; if it is not first liquidity we call math formulas
         (lp_out, biton_out) = math::add_lp(msg_value, jetton_amount);
     }
-    if (biton_out == -1) {
+    if (biton_out == -1) { ;; if error we send back jettons and tons
         lp::send_back(msg_value, jetton_amount, sender_addr);
         return ();
     }
 
-
+    ;; if we have excesses we send back some jettons
     if (biton_out > 500000000) {
         msg_value -= operation_price;
         builder refund_body = begin_cell()
@@ -60,14 +62,16 @@
         send_raw_message(refund_msg.end_cell(), 0);
     }
 
+
+    ;; messages for mint new lp tokens
     cell master_msg = begin_cell()
-        .store_uint(op::internal_transfer(), 32)
-        .store_uint(0, 64) ;; query_id
-        .store_coins(lp_out)
-        .store_slice(lp_minter_addr) ;; from_address
-        .store_slice(my_address()) ;; response_address
-        .store_coins(0)     ;; no forward_amount
-        .store_uint(0, 1)   ;; forward_payload in this slice, not separate cell
+        .store_uint(op::internal_transfer(), 32)    ;; op
+        .store_uint(0, 64)                          ;; query_id
+        .store_coins(lp_out)                        ;; amount
+        .store_slice(lp_minter_addr)                ;; from_address
+        .store_slice(my_address())                  ;; response_address
+        .store_coins(0)                             ;; no forward_amount
+        .store_uint(0, 1)                           ;; forward_payload in this slice, not separate cell
         .end_cell();
 
     cell mint_body = begin_cell()
@@ -97,17 +101,18 @@
         .store_coins(msg_value)
         .store_coins(lp_out)
         .store_coins(biton_out);
-
+    ;; send log
     event::emit(sender_addr, event_body.end_cell());
     
     pack_data();
     return ();
 }
 
+;; method for remove lp
 () lp::del_liquidity(slice in_msg_body) impure inline_ref {
     init_data();
-    in_msg_body~skip_bits(64); ;; query_id
-    int amount = in_msg_body~load_coins();
+    in_msg_body~skip_bits(64); ;; skip query_id
+    int amount = in_msg_body~load_coins(); 
     slice sender_addr = in_msg_body~load_msg_addr();
     (int ton_out, int biton_out, int collect_fee) = math::del_lp(amount);
 
@@ -116,14 +121,14 @@
     ton_out -= 50000000;
 
     builder transfer_body = begin_cell()
-        .store_uint(op::transfer(), 32) ;; op
-        .store_uint(cur_lt(), 64) ;; query id
-        .store_coins(biton_out) ;; amount
-        .store_slice(sender_addr) ;; destination
-        .store_slice(my_address()) ;; response_destination
-        .store_uint(0, 1) ;; custom payload
-        .store_coins(ton_out + collect_fee) ;; forward ton amount
-        .store_uint(0, 1); ;; forward payload
+        .store_uint(op::transfer(), 32)             ;; op
+        .store_uint(cur_lt(), 64)                   ;; query id
+        .store_coins(biton_out)                     ;; amount
+        .store_slice(sender_addr)                   ;; destination
+        .store_slice(my_address())                  ;; response_destination
+        .store_uint(0, 1)                           ;; custom payload
+        .store_coins(ton_out + collect_fee)         ;; forward ton amount
+        .store_uint(0, 1);                          ;; forward payload
 
     builder transfer_msg = begin_cell()
         .store_uint(0x18, 6)
@@ -134,11 +139,11 @@
     send_raw_message(transfer_msg.end_cell(), 0);
 
     builder burn_body = begin_cell()
-        .store_uint(op::burn(), 32) ;; op
-        .store_uint(cur_lt(), 64) ;; query id
-        .store_coins(amount) ;; amount
-        .store_slice(my_address()) ;; response destination
-        .store_uint(0, 1); ;; custom payload
+        .store_uint(op::burn(), 32)     ;; op
+        .store_uint(cur_lt(), 64)       ;; query id
+        .store_coins(amount)            ;; amount
+        .store_slice(my_address())      ;; response destination
+        .store_uint(0, 1);              ;; custom payload
 
     builder burn_msg = begin_cell()
         .store_uint(0x18, 6)
@@ -154,7 +159,7 @@
         .store_coins(amount) ;; lp tokens amount
         .store_coins(ton_out + collect_fee + operation_price) ;; ton amount
         .store_coins(biton_out); ;; biton amount
-
+    ;; send log
     event::emit(sender_addr, log_body.end_cell());
 
     lp_total_supply -= amount;

@@ -1,5 +1,7 @@
 ;; math logic 
 
+
+;; babylonian sqrt (~1500 gas)
 int sqrt(int x) {
   if (x == 0) { return 0; }
 
@@ -96,7 +98,7 @@ math::add_lp(int a, int b) method_id {
 (
     int,  ;; a out
     int,  ;; b out
-    int  ;; fee out
+    int   ;; fee out
 ) math::del_lp(int a) method_id {
     init_data();
     int user_percent = division(a, lp_total_supply);
@@ -141,7 +143,7 @@ math::add_lp(int a, int b) method_id {
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_a_after_execution = division(k, reserve_b_initial + amount_input);
     int amount_out = reserve_a_initial - reserve_a_after_execution;
-    int fee = division(multiply(amount_out, b_service_fee), 1000000000);
+    int fee = get_percent(amount_out, b_service_fee, 1000000000);
     amount_out -= fee;
     int market_price = division(amount_input, amount_out);
     return (amount_out, market_price, fee);

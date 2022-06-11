@@ -1,30 +1,30 @@
 global int init?;
 ;; other
 
-global int biton_balance; ;; biton liq
-global int operation_price;
-global int service_collect_fee; ;; the commission we have collected
-global int a_service_fee; ;; active a service fee in percentage
-global int b_service_fee; ;; active b service fee in percentage
-global int max_price_percentage; ;; maximum percentage mark-up
-global slice project_addr; ;; admin address
-global slice jetton_addr; ;; jetton wallet addr
+global int biton_balance;               ;; biton liq
+global int operation_price;             ;; operation price for transfers
+global int service_collect_fee;         ;; the commission we have collected
+global int a_service_fee;               ;; active a service fee in percentage
+global int b_service_fee;               ;; active b service fee in percentage
+global int max_price_percentage;        ;; maximum percentage mark-up
+global slice project_addr;              ;; admin address
+global slice jetton_addr;               ;; jetton wallet addr
 
 ;; other end
 
 ;; lp
-global int lp_total_supply;
-global int lp_collect_fee;
-global int lp_fee_percentage;
+global int lp_total_supply;             ;; total supply lp tokens
+global int lp_collect_fee;              ;; total lp tokens collect fee
+global int lp_fee_percentage;           ;; fee for lp tokens
 
-global slice lp_jwall_addr;
-global slice lp_minter_addr;
+global slice lp_jwall_addr;             ;; lp jetton wallet address
+global slice lp_minter_addr;            ;; lp minter address
 
 ;; lp end
 
 
-global cell jetton_minter_code;
-global cell jetton_wallet_code;
+global cell jetton_minter_code;         ;; jetton minter code (remove after deploy)
+global cell jetton_wallet_code;         ;; jetton wallet code (remove after deploy)
 
 global int int_gbl::balance;
 

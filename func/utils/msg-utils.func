@@ -1,4 +1,4 @@
-slice msg::withdraw_fee() asm "<b 124 word DEX commission withdrawal| $, b> <s PUSHSLICE";
-slice msg::ton_to_biton() asm "<b 124 word You have successfully exchanged TON for BITON!| $, b> <s PUSHSLICE";
-slice msg::biton_to_ton() asm "<b 124 word You have successfully exchanged BITON for TON!| $, b> <s PUSHSLICE";
-slice response::withdraw_fee() asm "<b 124 word Withdraw| $, b> <s PUSHSLICE";
+slice msg::withdraw_fee()           asm "<b 124 word DEX commission withdrawal| $, b> <s PUSHSLICE";
+slice msg::ton_to_biton()           asm "<b 124 word You have successfully exchanged TON for BITON!| $, b> <s PUSHSLICE";
+slice msg::biton_to_ton()           asm "<b 124 word You have successfully exchanged BITON for TON!| $, b> <s PUSHSLICE";
+slice response::withdraw_fee()      asm "<b 124 word Withdraw| $, b> <s PUSHSLICE";
