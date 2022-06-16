@@ -26,8 +26,8 @@
 ;; change service fee for swaps
 () adm::change_service_fee(slice in_msg_body) impure {
     init_data();
-    a_service_fee = in_msg_body~load_uint(10);
-    b_service_fee = in_msg_body~load_uint(10);
+    a_service_fee = in_msg_body~load_uint(32);
+    b_service_fee = in_msg_body~load_uint(32);
     pack_data();
     return ();
 }
