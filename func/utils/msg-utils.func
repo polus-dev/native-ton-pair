@@ -2,3 +2,4 @@ slice msg::withdraw_fee()           asm "<b 124 word DEX commission withdrawal| 
 slice msg::ton_to_biton()           asm "<b 124 word You have successfully exchanged TON for BITON!| $, b> <s PUSHSLICE";
 slice msg::biton_to_ton()           asm "<b 124 word You have successfully exchanged BITON for TON!| $, b> <s PUSHSLICE";
 slice response::withdraw_fee()      asm "<b 124 word Withdraw| $, b> <s PUSHSLICE";
+slice msg::freeze_msg()             asm "<b 124 word Exchanges frozen for the time being| $, b> <s PUSHSLICE";

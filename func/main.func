@@ -44,11 +44,24 @@
         handle::admin_methods(in_msg_body);
         return ();
     }
+
+
+
+
+
+
     ;; if we receive message from lp jetton wallet it`s means we should remove some liquidity
     if (equal_slices(sender_address, lp_jwall_addr)) {
         if (in_msg_body~load_uint(32) == op::transfer_notification()) {
+            if (freeze? == true ) {
+                handle::return_lp_transaction(in_msg_body);
+                return ();
+            }
             lp::del_liquidity(in_msg_body);
             return ();
+        }
+        else {
+            service_collect_fee += msg_value;
         }
         return ();
     } else { ;; run user methods

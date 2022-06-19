@@ -56,7 +56,7 @@
 }
 
 
-() usr::buy_ton(int msg_value, slice sender_addr, int jetton_amount, int max_price) impure inline_ref {
+() usr::buy_ton(int msg_value, slice sender_addr, int jetton_amount, int max_price, slice err_addr) impure inline_ref {
     init_data();
     
     ;; math formulas AMM
@@ -64,13 +64,17 @@
 
     ;; market price > max price we refund biton
     if (m_price > max_price) {
-        usr::refund_biton(sender_addr, jetton_amount);
+        usr::refund_biton(err_addr, jetton_amount);
         return ();
     }
 
-    throw_if(err::no_balance(), ton_amount >= int_gbl::balance);
+
+    if (ton_amount >= int_gbl::balance) {
+        usr::refund_biton(err_addr, jetton_amount);
+        return ();
+    }
     ;; FIXME
-    ton_amount -= 60000000;  ;; 0,05 ton for notify
+    ton_amount -= 60000000;  ;; 0,06 ton for notify
     ;; msg payout ton
     var msg = begin_cell()
         .store_uint(0x18, 6)
@@ -83,7 +87,7 @@
     usr::notify(
         msg::biton_to_ton(), event_op::jettonton(),
         fee, jetton_amount, ton_amount,
-        get_price(), m_price, sender_addr
+        get_price(), m_price, err_addr
     );
 
     biton_balance += jetton_amount;

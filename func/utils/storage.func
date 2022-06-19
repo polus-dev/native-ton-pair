@@ -1,6 +1,8 @@
 global int init?;
 ;; other
 
+
+global int freeze?;                     ;; if freeze = true we bounce all transaction
 global int biton_balance;               ;; biton liq
 global int operation_price;             ;; operation price for transfers
 global int service_collect_fee;         ;; the commission we have collected
@@ -64,6 +66,7 @@ _ init_data() impure {
 _ pack_data() impure {
     
     var swap_params = begin_cell()
+        .store_int(1, freeze?)
         .store_coins(biton_balance)
         .store_coins(operation_price)
         .store_coins(service_collect_fee)
