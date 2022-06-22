@@ -67,7 +67,7 @@
     in_msg_body~skip_bits(64); ;; query id
     int jetton_amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
-    slice err_addr = sender_addr;
+    slice routing_addr = sender_addr;
 
     int op = 0;
     int max_price = 0;
@@ -87,12 +87,11 @@
         if (op == op::buy()) { max_price = fwd_payload~load_grams(); } ;; if we have op = op buy we can load max price
         if (op == op::routing()) { 
             fwd_payload~skip_bits(64);
-            sender_addr = fwd_payload~load_msg_addr();
-            err_addr = fwd_payload~load_msg_addr();
+            routing_addr = fwd_payload~load_msg_addr();
             } ;; TODO routing
     }
 
-    return (op, sender_addr, jetton_amount, max_price, err_addr);
+    return (op, sender_addr, jetton_amount, max_price, routing_addr);
 }
 
 
@@ -164,17 +163,18 @@
         ;; throw if sender != jetton address
         throw_unless(err::fake_addr(), equal_slices(jetton_addr, sender_address));
         ;; parse message from jetton wallet
-        (int op, slice sender_addr, int jetton_amount, int max_price, slice err_addr) = handle::parse_transfer_body(in_msg_body);
+        (int op, slice sender_addr, int jetton_amount, int max_price, slice routing_addr) = handle::parse_transfer_body(in_msg_body);
         
         if (freeze? == true) {   ;; return transaction if we have freeze status
-            handle::return_biton_transaction(err_addr, msg_value, jetton_amount);
+            handle::return_biton_transaction(sender_addr, msg_value, jetton_amount);
             return ();
         }
 
         
         ;; if jettons for buy ton
         if (op == op::buy()) {
-            usr::buy_ton(msg_value, sender_addr, jetton_amount, max_price, err_addr);
+            service_collect_fee += msg_value;
+            usr::buy_ton(msg_value, sender_addr, jetton_amount, max_price, routing_addr);
         }
         ;; if user want add liquidity
         if (op == op::add_liquidity()) {
