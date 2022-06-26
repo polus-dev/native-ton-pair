@@ -37,7 +37,7 @@
 
 () handle::return_biton_transaction(slice sender_addr, int msg_value, int jetton_amount) impure inline_ref {
     var msg_body = begin_cell()
-        .store_uint(op::transfer())
+        .store_uint(op::transfer(), 32)
         .store_uint(cur_lt(), 64) ;; query id
         .store_slice(sender_addr) ;; destination
         .store_slice(my_address()) ;; response destination
