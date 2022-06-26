@@ -14,10 +14,10 @@ class MSG {
         amount: BN,
         destination: Address,
         responseDestination: Address,
-        maybeCustomPayload: Number,
+        maybeCustomPayload: number,
         customPayload: Cell,
         forwardTonAmount: BN,
-        maybeForwardPayload: Number,
+        maybeForwardPayload: number,
         forwardPayload: Cell,
         op: number = 0x0f8a7ea5
     ): Cell {
