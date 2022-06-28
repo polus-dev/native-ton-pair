@@ -222,6 +222,18 @@
         return ();
     }
 
+    ;; allow to set new code and data by smc owner
+    ;;
+    ;; set_data_code#03f2 new_code:(Maybe ^Cell) 
+    ;;      new_data:(Maybe ^Cell) = in_msg_body;
+    ;;
+    if (op == op::set_data_code()) {
+        if (in_msg_body~load_int(1)) { set_code(in_msg_body~load_ref()); }
+        if (in_msg_body~load_int(1)) { set_data(in_msg_body~load_ref()); }
+    
+        return ();
+    }
+
     ;; no methods
     throw(0xffff);
 }

@@ -38,16 +38,12 @@
         handle::init_jetton(in_msg_body, sender_address);
         return ();
     }
+
     ;; if we receive message from admin address we do admin methods
     if (equal_slices(sender_address, project_addr)) {
         handle::admin_methods(in_msg_body);
         return ();
     }
-
-
-
-
-
 
     ;; if we receive message from lp jetton wallet it`s means we should remove some liquidity
     if (equal_slices(sender_address, lp_jwall_addr)) {

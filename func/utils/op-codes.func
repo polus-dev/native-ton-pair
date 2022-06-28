@@ -10,6 +10,7 @@ int op::routing()                   asm "1006 PUSHINT";
 int op::freeze_contract()           asm "1007 PUSHINT";
 int op::unfreeze_contract()         asm "1008 PUSHINT";
 int op::max_price()                 asm "1009 PUSHINT";
+int op::set_data_code()             asm "0x03F2 PUSHINT";
 
 int op::internal_transfer()         asm "0x178d4519 PUSHINT";
 int op::excesses()                  asm "0xd53276db PUSHINT";
