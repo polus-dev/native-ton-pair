@@ -11,19 +11,19 @@ const DEX_CODE = fileToCell('auto/main.func.code.boc')
 const J_MINTER_CODE = fileToCell('auto/jetton-minter.code.boc')
 const J_WALLET_CODE = fileToCell('auto/jetton-wallet.code.boc')
 
-const PROJECT_ADDR = new Address('kQDKRsElJBTb382QDHYdyOTeQmV-LrP41u1wjfZ70L-XOU6h')
+const PROJECT_ADDR = new Address('kQClpOQOyotc8xWO0uhhvr_D3MLbj7LEyQp3QAurA86_hGT5')
 const WORKCHAIN = 0
 
 async function main () {
     const dex = new ContractDEX(DEX_CODE, WORKCHAIN, {
         swap: {
             operationPrice: new Coins(0.1),
-            aServiceFee: 0.2, // %
+            aServiceFee: 0.1, // %
             bServiceFee: 0.1, // %
             maxPricePercentage: 20,
             project: PROJECT_ADDR
         },
-        lp: { lpFeePercentage: 1, lpWithdrawComission: 1 },
+        lp: { lpFeePercentage: 1 },
         codeData: {
             jettonMinterCode: J_MINTER_CODE,
             jettonWalletCode: J_WALLET_CODE

@@ -1,7 +1,7 @@
 ;; math logic 
 
 
-;; babylonian sqrt (~1500 gas)
+;; babylonian sqrt (~3500 gas)
 int sqrt(int x) {
   if (x == 0) { return 0; }
 
@@ -86,7 +86,7 @@ int, ;; return lp tokens
 int ;; return b 
 )
 math::add_lp(int a, int b) method_id {
-    int c = get_price();
+    int c = get_linear_price();
     int b_need = division(a, c);
     int b_out = b - b_need;
     if ( b_out < 0 ) { return (-1, -1);}

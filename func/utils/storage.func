@@ -40,6 +40,7 @@ global int int_gbl::balance;
 }
 
 () parse_swap_params(var ds) impure {
+    freeze? = ds~load_int(1);
     biton_balance = ds~load_coins();
     operation_price = ds~load_coins();
     service_collect_fee = ds~load_coins();
@@ -66,7 +67,7 @@ _ init_data() impure {
 _ pack_data() impure {
     
     var swap_params = begin_cell()
-        .store_int(1, freeze?)
+        .store_int(freeze?, 1)
         .store_coins(biton_balance)
         .store_coins(operation_price)
         .store_coins(service_collect_fee)

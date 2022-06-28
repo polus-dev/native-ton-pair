@@ -12,27 +12,17 @@ class MSG {
     public static transfer (
         queryId: BN,
         amount: BN,
-        destination: Address,
-        responseDestination: Address,
-        maybeCustomPayload: number,
-        customPayload: Cell,
-        forwardTonAmount: BN,
+        sender: Address,
         maybeForwardPayload: number,
-        forwardPayload: Cell,
-        op: number = 0x0f8a7ea5
+        forwardPayload?: Cell,
+        op: number = 0x7362d09c
     ): Cell {
         const msg = new Builder()
             .storeUint(op, 32)
             .storeUint(queryId, 64)
             .storeCoins(amount)
-            .storeAddress(destination)
-            .storeAddress(responseDestination)
-            .storeUint(maybeCustomPayload, 1)
-        if (maybeCustomPayload) {
-            msg.storeRef(customPayload)
-        }
-        msg.storeCoins(forwardTonAmount)
-        msg.storeUint(maybeForwardPayload, 1)
+            .storeAddress(sender)
+            .storeUint(maybeForwardPayload, 1)
         if (maybeForwardPayload) {
             msg.storeRef(forwardPayload)
         }

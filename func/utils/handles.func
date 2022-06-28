@@ -80,7 +80,7 @@
     ;; if we have message with empty body then we set op = op_buy, and calculate max price
     if (fwd_payload.slice_data_empty?()) {
         op = op::buy();
-        max_price = plus_percent(get_price(), max_price_percentage, 1000000000);
+        max_price = plus_percent(get_linear_price(), max_price_percentage, 1000000000);
     }
     else {
         op = fwd_payload~load_uint(32);

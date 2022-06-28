@@ -1,9 +1,14 @@
+int get_freeze() method_id {
+    init_data();
+    return freeze?;
+}
+
 int get_btn_balance() method_id {
     init_data();
     return biton_balance;
 }
 
-int get_price() method_id {
+int get_linear_price() method_id {
     init_data();
     return (pair_first(get_balance()) * 1000000000) / biton_balance;
 }
@@ -19,36 +24,59 @@ int get_operation_price() method_id {
 }
 
 
-int get_collect_fee() method_id {
+int get_service_collect_fee() method_id {
     init_data();
     return service_collect_fee;
 }
 
-slice get_project_address() method_id {
+int get_max_price_percentage() method_id {
     init_data();
-    return project_addr;
+    return max_price_percentage;
 }
 
-slice get_jetton_address() method_id {
+(int, int) get_project_address() method_id {
     init_data();
-    return jetton_addr;
+    if (project_addr.slice_bits() <= 2) { 
+        return (0, 0);
+    }
+    return parse_std_addr(project_addr);
 }
 
-_ get_swap_params() method_id {
+(int, int) get_jetton_address() method_id {
     init_data();
-    return (    
-        biton_balance,          operation_price,
-        service_collect_fee,    a_service_fee,          
-        b_service_fee,          max_price_percentage,   
-        project_addr,           jetton_addr
-    );
+    if (jetton_addr.slice_bits() <= 2) {
+        return (0, 0);
+    }
+    return parse_std_addr(jetton_addr);
 }
 
-_ get_lp_params() method_id {
+int get_lp_total_supply() method_id {
     init_data();
-    return (
-        lp_total_supply,        lp_collect_fee,
-        lp_fee_percentage,
-        lp_jwall_addr,          lp_minter_addr
-    );
+    return lp_total_supply;
+}
+
+int get_lp_collect_fee() method_id {
+    init_data();
+    return lp_collect_fee;
+}
+
+int get_lp_fee_percentage() method_id {
+    init_data();
+    return lp_fee_percentage;
+}
+
+(int, int) get_lp_jetton_address() method_id {
+    init_data();
+    if (lp_jwall_addr.slice_bits() <= 2) {
+        return (0, 0);
+    }
+    return parse_std_addr(lp_jwall_addr);
+}
+
+(int, int) get_lp_minter_address() method_id {
+    init_data();
+    if (lp_minter_addr.slice_bits() <= 2) {
+        return (0, 0);
+    }
+    return parse_std_addr(lp_minter_addr);
 }

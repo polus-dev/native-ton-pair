@@ -99,7 +99,7 @@
     usr::notify(
         msg::biton_to_ton(), event_op::jettonton(),
         fee, jetton_amount, ton_amount,
-        get_price(), m_price, err_addr
+        get_linear_price(), m_price, err_addr
     );
 
     biton_balance += jetton_amount;
@@ -125,7 +125,7 @@
         op = in_msg_body~load_uint(32);
     }
     ;; see if there is anything else in the body. If not, add the maximum markup to the linear price. If yes, we take the maximum price
-    int max_price = plus_percent(get_price(), max_price_percentage, 1000000000);
+    int max_price = plus_percent(get_linear_price(), max_price_percentage, 1000000000);
     if (op == op::max_price()) {
         max_price = in_msg_body~load_coins();
     }
@@ -160,7 +160,7 @@
     usr::notify(
         msg::ton_to_biton(), event_op::tonjetton(),
         fee, msg_value, jetton_amount,
-        get_price(), m_price, sender_address
+        get_linear_price(), m_price, sender_address
     );
 
     service_collect_fee += fee;

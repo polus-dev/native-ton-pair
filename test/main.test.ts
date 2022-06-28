@@ -1,16 +1,17 @@
 import { expect } from 'chai'
 import * as fs from 'fs'
-// import BN from 'bn.js'
+import BN from 'bn.js'
 import {
     Builder,
     InternalMessage,
     CommonMessageInfo,
     CellMessage,
     Cell,
-    toNano
+    toNano,
+    Address
 } from 'ton'
 import { SmartContract } from 'ton-contract-executor'
-import { encodeDexStorage } from '../src/encoder'
+import { encodeDexStorage, MSG } from '../src/encoder'
 import { getRandSigner } from '../src/signer'
 
 function bocFileToTCell (filename: string): Cell {
@@ -18,25 +19,26 @@ function bocFileToTCell (filename: string): Cell {
     return Cell.fromBoc(file)[0]
 }
 
-// function queryId (): BN {
-//     return new BN(~~(Date.now() / 1000))
-// }
+function queryId (): BN {
+    return new BN(~~(Date.now() / 1000))
+}
 
-// const TVM_EXIT_CODES = {
-//     OK: 0,
-//     noOp: 2000,
-//     noBalance: 2001,
-//     fakeAddr: 2002,
-//     smallTrans: 2003,
-//     smallFee: 2004,
-//     noComment: 2005,
-//     maxPrice: 2006
-// }
+const TVM_EXIT_CODES = {
+    OK: 0,
+    noOp: 2000,
+    noBalance: 2001,
+    fakeAddr: 2002,
+    smallTrans: 2003,
+    smallFee: 2004,
+    noComment: 2005,
+    maxPrice: 2006
+}
 
 describe('SmartContract main tests', () => {
     let smc: SmartContract
     const FREEZE = 0
     const SELF_ADDR = getRandSigner()
+    const JETTON_ADDR = getRandSigner()
     const OPERATION_PRICE_TON = 0.5
     const A_SERVICE_FEE = 0.75
     const B_SERVICE_FEE = 0.75
@@ -75,9 +77,47 @@ describe('SmartContract main tests', () => {
         }))
     })
 
-    describe('huy', () => {
-        it('aboba', () => {
-            expect(1).to.equal(1)
+    describe('contract', () => {
+        // interface ISimpleResult {
+        //     exit_code: number
+        //     out: OutAction[]
+        // }
+        // async function simpleTransferTokens (amount: BN): Promise<void> {
+        //     const msg = MSG.transfer(queryId(), amount, PROJECT_ADDR, 0)
+        //     await smc.sendInternalMessage(new InternalMessage({
+        //         to: SELF_ADDR,
+        //         from: JETTON_ADDR,
+        //         value: toNano(0.1),
+        //         bounce: true,
+        //         body: new CommonMessageInfo({ body: new CellMessage(msg) })
+        //     }))
+        // }
+        it('1) Succes pair deploy', async () => {
+            await smc.sendInternalMessage(new InternalMessage({
+                to: SELF_ADDR,
+                from: PROJECT_ADDR,
+                value: toNano(0.1),
+                bounce: true,
+                body: EMPTY_BODY
+            }))
+            const msg = MSG.transfer(queryId(), toNano(10), PROJECT_ADDR, 0)
+            const result = await smc.sendInternalMessage(new InternalMessage({
+                to: SELF_ADDR,
+                from: JETTON_ADDR,
+                value: toNano(0.1),
+                bounce: true,
+                body: new CommonMessageInfo({ body: new CellMessage(msg) })
+            }))
+
+            const get = await smc.invokeGetMethod('get_operation_price', [])
+            // const jettonAddrState = new Address(
+            //     Number(get.result[0].toString()),
+            //     new BN(get.result[1].toString()).toBuffer()
+            // )
+            console.log(get.result)
+
+            // expect(jettonAddrState.toFriendly()).to.equal(JETTON_ADDR.toFriendly())
+            expect(result.exit_code).to.equal(TVM_EXIT_CODES.OK)
         })
     })
 })

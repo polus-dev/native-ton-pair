@@ -2,7 +2,7 @@
 import * as fs from 'fs'
 import { Address, BOC, Cell } from 'ton3'
 import { TonClient4, Address as AddressSteve } from 'ton'
-import { getRandSigner } from 'signer'
+import { getRandSigner } from './signer'
 
 function fileToCell (filename: string): Cell {
     const file = fs.readFileSync(filename)

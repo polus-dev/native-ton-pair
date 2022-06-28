@@ -26,7 +26,7 @@ function main () {
     console.log(`initdata.ton:  ${initdata.ton}`)
     console.log(`initdata.prop: ${initdata.prop}`)
 
-    const fwdjetton = Math.round((initdata.ton / initdata.prop) * 1000000000)
+    const fwdjetton = Math.round(initdata.ton / initdata.prop)
     console.log(`fwdjetton:     ${fwdjetton}`)
 
     const body = new Builder()

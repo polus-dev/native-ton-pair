@@ -23,18 +23,17 @@
     throw_if(0, cs~load_uint(4) & 1); ;; ignore bounce
 
     slice sender_address = cs~load_msg_addr();
-    
 
     ;; check if minter init or not
-    int is_lp_minter_init? = ~(equal_slices(lp_minter_addr, extlib::addr_none()));
+    int is_lp_minter_init? = equal_slices(lp_minter_addr, extlib::addr_none());
     ;; if not
-    ifnot(is_lp_minter_init?) {
+    if(is_lp_minter_init?) {
         handle::deploy_lp_wallets(); ;; we deploy lp minter and lp jetton wallet
         return ();
     }
     ;; check deploy jetton or not FIX ME
-    int is_jetton_init? = ~(equal_slices(jetton_addr, extlib::addr_none()));
-    if (~ is_jetton_init?) {
+    int is_jetton_init? = equal_slices(jetton_addr, extlib::addr_none());
+    if (is_jetton_init?) {
         ;; accept jettons
         handle::init_jetton(in_msg_body, sender_address);
         return ();
