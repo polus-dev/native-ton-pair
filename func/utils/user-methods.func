@@ -63,16 +63,16 @@
     (int ton_amount, int m_price, int fee) = get_price_ton(jetton_amount);
 
     ;; market price > max price we refund biton
-    if (m_price > max_price) {
-        usr::refund_biton(sender_addr, jetton_amount);
-        return ();
-    }
+    ;; if (m_price > max_price) {
+    ;;     usr::refund_biton(sender_addr, jetton_amount);
+    ;;     return ();
+    ;; }
 
 
-    if (ton_amount >= int_gbl::balance) {
-        usr::refund_biton(sender_addr, jetton_amount);
-        return ();
-    }
+    ;; if (ton_amount >= int_gbl::balance) {
+    ;;     usr::refund_biton(sender_addr, jetton_amount);
+    ;;     return ();
+    ;; }
     ;; FIXME
     ton_amount -= 60000000;  ;; 0,06 ton for notify
     ;; msg payout ton
