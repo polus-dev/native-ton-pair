@@ -137,7 +137,7 @@ math::add_lp(int a, int b) method_id {
     int  ;; fee
 ) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
-    int reserve_a_initial = pair_first(get_balance()) -     service_collect_fee - lp_collect_fee; ;; liq ton
+    int reserve_a_initial = pair_first(get_balance()) - service_collect_fee - lp_collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
     int amount_input = amount_traded; ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
