@@ -1,24 +1,74 @@
 ;; math logic 
 
+
+;; babylonian sqrt (~3500 gas)
+int sqrt(int x) {
+  if (x == 0) { return 0; }
+
+  int xx = x;
+  int r = 1;
+  if (xx >= 0x100000000000000000000000000000000) {
+    xx >>= 128;
+    r <<= 64;
+  }
+  if (xx >= 0x10000000000000000) {
+    xx >>= 64;
+    r <<= 32;
+  }
+  if (xx >= 0x100000000) {
+    xx >>= 32;
+    r <<= 16;
+  }
+  if (xx >= 0x10000) {
+    xx >>= 16;
+    r <<= 8;
+  }
+  if (xx >= 0x100) {
+    xx >>= 8;
+    r <<= 4;
+  }
+  if (xx >= 0x10) {
+    xx >>= 4;
+    r <<= 2;
+  }
+  if (xx >= 0x8) {
+    r <<= 1;
+  }
+  r = (r + x / r) >> 1;
+  r = (r + x / r) >> 1;
+  r = (r + x / r) >> 1;
+  r = (r + x / r) >> 1;
+  r = (r + x / r) >> 1;
+  r = (r + x / r) >> 1;
+  r = (r + x / r) >> 1;
+
+  int r1 = x / r;
+
+  return (r < r1 ? r : r1);
+}
+
 int division(int a, int b) { ;; division with factor
-    return a * 1000000000 / b;
+    return muldiv(a, 1000000000, b);
 }
 
 int multiply(int a, int b) { ;; multiply with factor
-    return a * b / 1000000000;
+    return muldiv(a, b, 1000000000);
 }
 
-int minus_percent(int a, int percent, int factor) { ;; subtract the percentage from the number
-    return a - division(multiply(a, percent), factor);
-}
-
-int plus_percent(int a, int percent, int factor) {
-    return a + division(multiply(a, percent), factor);
-}
 
 int get_percent(int a, int percent, int factor) {
     return division(multiply(a, percent), factor);
 }
+
+int minus_percent(int a, int percent, int factor) { ;; subtract the percentage from the number
+    return a - get_percent(a, percent, factor);
+}
+
+int plus_percent(int a, int percent, int factor) {
+    return a + get_percent(a, percent, factor);
+}
+
+
 
 {-
 LP formulas I'm dead inside 1000 - 🐈⛓
@@ -26,7 +76,7 @@ LP formulas I'm dead inside 1000 - 🐈⛓
 
 
 int math::get_lp_value(int a, int b) {
-    return a * b / 1000000000;
+    return sqrt(a * b);
 }
 
 
@@ -36,7 +86,7 @@ int, ;; return lp tokens
 int ;; return b 
 )
 math::add_lp(int a, int b) method_id {
-    int c = get_price();
+    int c = get_linear_price();
     int b_need = division(a, c);
     int b_out = b - b_need;
     if ( b_out < 0 ) { return (-1, -1);}
@@ -48,19 +98,14 @@ math::add_lp(int a, int b) method_id {
 (
     int,  ;; a out
     int,  ;; b out
-    int,  ;; fee out
-    int   ;; service comission
+    int   ;; fee out
 ) math::del_lp(int a) method_id {
     init_data();
     int user_percent = division(a, lp_total_supply);
     int a_out = get_percent(get_balance().pair_first(), user_percent, 1000000000);
     int b_out = get_percent(biton_balance, user_percent, 1000000000);
     int fee_out = get_percent(lp_collect_fee, user_percent, 1000000000);
-    int linear_price = get_price();
-    int b_in_a = division(b_out, linear_price);
-    int withdraw_comission = get_percent(a_out + b_in_a, lp_withdraw_comission, 1000000000);
-    a_out -= withdraw_comission;
-    return (a_out, b_out, fee_out, withdraw_comission);
+    return (a_out, b_out, fee_out);
 }
 
 
@@ -76,7 +121,7 @@ math::add_lp(int a, int b) method_id {
     init_data();
     int reserve_a_initial = pair_first(get_balance()) - service_collect_fee - lp_collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
-    int fee = division(multiply(amount_traded, a_service_fee), 1000);
+    int fee = get_percent(amount_traded, a_service_fee, 1000000000);
     int amount_input = amount_traded - fee; ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_b_after_execution = division(k, reserve_a_initial + amount_input);
@@ -98,7 +143,7 @@ math::add_lp(int a, int b) method_id {
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_a_after_execution = division(k, reserve_b_initial + amount_input);
     int amount_out = reserve_a_initial - reserve_a_after_execution;
-    int fee = division(multiply(amount_out, b_service_fee), 1000);
+    int fee = get_percent(amount_out, b_service_fee, 1000000000);
     amount_out -= fee;
     int market_price = division(amount_input, amount_out);
     return (amount_out, market_price, fee);

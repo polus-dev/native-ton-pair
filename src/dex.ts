@@ -16,7 +16,6 @@ interface IDexSwap {
 
 interface IDexLP {
     lpFeePercentage: number
-    lpWithdrawComission: number
 }
 
 interface IDexCodeData {
@@ -51,8 +50,9 @@ class ContractDEX extends Contracts.ContractBase {
         const { swap, lp, codeData } = options
 
         const swapParams = new Builder()
+            .storeInt(0, 1) // freeze
             .storeCoins(new Coins(0)) // biton_balance
-            .storeCoins(swap.operationPrice)
+            .storeCoins(swap.operationPrice) // operation price
             .storeCoins(new Coins(0)) // service_collect_fee
             .storeUint(ContractDEX.percentToInt(swap.aServiceFee), 32)
             .storeUint(ContractDEX.percentToInt(swap.bServiceFee), 32)
@@ -64,7 +64,6 @@ class ContractDEX extends Contracts.ContractBase {
             .storeCoins(new Coins(0)) // lp_total_supply
             .storeCoins(new Coins(0)) // lp_collect_fee
             .storeUint(ContractDEX.percentToInt(lp.lpFeePercentage), 32)
-            .storeUint(ContractDEX.percentToInt(lp.lpWithdrawComission), 32)
             .storeAddress(Address.NONE) // lp_jwall_addr
             .storeAddress(Address.NONE) // lp_minter_addr
 

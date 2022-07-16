@@ -1,14 +1,16 @@
 "Asm.fif" include
 
-<{ SETCP0 ACCEPT
-    "auto/main.func.code.fif" include PUSHREF SETCODE
-}>c 
-2 boc+>B "auto/main.func.code.boc" B>file
+."[INF] building 'auto/main.func.code.fif' fift-asm to boc" cr
+<{  
+    SETCP0 ACCEPT
+    "auto/main.func.code.fif" 
+    include PUSHREF SETCODE
+}>c 2 boc+>B "auto/main.func.code.boc" B>file
 
-// "lp-token/auto/btn-jwallet.func.code.fif" include
-// 2 boc+>B
-// "auto/btn-jwallet.func.code.boc" B>file
+."[INF] building 'lp-token/auto/jetton-minter.code.fif' fift-asm to boc" cr
+"lp-token/auto/jetton-minter.code.fif" include
+2 boc+>B "auto/jetton-minter.code.boc" B>file
 
-// "lp-token/auto/btn-mint-ico.func.code.fif" include
-// 2 boc+>B
-// "auto/btn-mint-ico.func.code.boc" B>file
+."[INF] building 'lp-token/auto/jetton-wallet.code.fif' fift-asm to boc" cr
+"lp-token/auto/jetton-wallet.code.fif" include
+2 boc+>B "auto/jetton-wallet.code.boc" B>file
