@@ -46,7 +46,7 @@ function main () {
                     bin: bodyBOC
                 })
 
-    console.log('')
+    console.log(link)
 
     qr.generate(link, { small: true })
 }

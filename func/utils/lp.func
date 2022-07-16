@@ -24,11 +24,16 @@
 () lp::add_liquidity(int msg_value, slice sender_addr, int jetton_amount) impure inline_ref {
     init_data();
     ;;  FIXME
+
+    int mint_value = 120000000;
+
     msg_value -= 50000000;          ;; for notification
     msg_value -= operation_price;   ;; for jettons transfers
+    msg_value -= mint_value;        ;; for minter
+
     int biton_out = 0;
     int lp_out = 0;
-    if (lp_total_supply == 0) { ;; if it`s first liquidity, we should ignore proportion 
+    if (lp_total_supply == 0) { ;; if it`s first liquidity, we should ignore proportion
         lp_out = math::get_lp_value(msg_value, jetton_amount);
         biton_out = 0;
     }
@@ -85,7 +90,7 @@
     builder mint_msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(lp_minter_addr)
-        .store_coins(operation_price)
+        .store_coins(mint_value)
         .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_ref(mint_body);
 
@@ -103,7 +108,7 @@
         .store_coins(biton_out);
     ;; send log
     event::emit(sender_addr, event_body.end_cell());
-    
+
     pack_data();
     return ();
 }
@@ -112,7 +117,7 @@
 () lp::del_liquidity(slice in_msg_body) impure inline_ref {
     init_data();
     in_msg_body~skip_bits(64); ;; skip query_id
-    int amount = in_msg_body~load_coins(); 
+    int amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
     (int ton_out, int biton_out, int collect_fee) = math::del_lp(amount);
 
