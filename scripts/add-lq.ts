@@ -44,7 +44,7 @@ function main () {
     const bodyBOC = BOC.toBase64Standard(body)
 
     // eslint-disable-next-line prefer-template
-    const link = 'https://test.tonhub.com/transfer/'
+    const link = 'https://tonhub.com/transfer/'
                 + initdata.jAddress.toString('base64', { bounceable: true, testOnly: true })
                 + '?'
                 + qs.stringify({
