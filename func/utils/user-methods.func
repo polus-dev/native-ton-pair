@@ -60,7 +60,7 @@
     init_data();
     
     ;; math formulas AMM
-    (int ton_amount, int m_price, int fee) = get_price_ton(jetton_amount);
+    (int ton_amount, int m_price, int s_fee, int lp_fee) = get_price_ton(jetton_amount);
 
     ;; market price > max price we refund biton
     ;; if (m_price > max_price) {
@@ -98,12 +98,13 @@
     ;; notify user and send ext message
     usr::notify(
         msg::biton_to_ton(), event_op::jettonton(),
-        fee, jetton_amount, ton_amount,
+        s_fee, jetton_amount, ton_amount,
         get_linear_price(), m_price, err_addr
     );
 
     biton_balance += jetton_amount;
-    service_collect_fee += fee;
+    service_collect_fee += s_fee;
+    lp_collect_fee += lp_fee;
     pack_data();
 }
 
@@ -116,7 +117,7 @@
     msg_value -= 60000000;  ;; 0,06 ton for notify
     msg_value -= operation_price;
     throw_if(err::small_trans(), msg_value <= 500000000);
-    (int jetton_amount, int m_price, int fee) = get_price_biton(msg_value);
+    (int jetton_amount, int m_price, int s_fee, int lp_fee) = get_price_biton(msg_value);
 
     throw_if(err::no_balance(), jetton_amount >= biton_balance);
 
@@ -159,11 +160,12 @@
     ;; notify user and send ext message
     usr::notify(
         msg::ton_to_biton(), event_op::tonjetton(),
-        fee, msg_value, jetton_amount,
+        s_fee, msg_value, jetton_amount,
         get_linear_price(), m_price, sender_address
     );
 
-    service_collect_fee += fee;
+    service_collect_fee += s_fee;
+    lp_collect_fee += lp_fee;
     biton_balance -= jetton_amount;
     pack_data();
 }

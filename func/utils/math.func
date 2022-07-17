@@ -116,25 +116,28 @@ math::add_lp(int a, int b) method_id {
 (
     int, ;; amount out
     int, ;; market price
-    int  ;; fee
+    int, ;; service fee
+    int  ;; lp fee
 ) get_price_biton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
     int reserve_a_initial = pair_first(get_balance()) - service_collect_fee - lp_collect_fee; ;; liq ton
     int reserve_b_initial = biton_balance; ;; liq biton
-    int fee = get_percent(amount_traded, a_service_fee, 1000000000);
-    int amount_input = amount_traded - fee; ;; equivalent to amount_traded - service_fee(percentage)
+    int s_fee = get_percent(amount_traded, a_service_fee, 1000000000);
+    int lp_fee = get_percent(amount_traded, lp_fee_percentage, 1000000000);
+    int amount_input = amount_traded - s_fee - lp_fee; ;; equivalent to amount_traded - service_fee(percentage)
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_b_after_execution = division(k, reserve_a_initial + amount_input);
     int amount_out = reserve_b_initial - reserve_b_after_execution;
     int market_price = division(amount_input, amount_out);
-    return (amount_out, market_price, fee);
+    return (amount_out, market_price, s_fee, lp_fee);
 }
 
 ;; biton -> ton
 (
     int, ;; amount out
     int, ;; market price
-    int  ;; fee
+    int, ;; service fee
+    int  ;; lp fee
 ) get_price_ton(int amount_traded) method_id { ;; this function returns the amount to be sent and the market price
     init_data();
     int reserve_a_initial = pair_first(get_balance()) - service_collect_fee - lp_collect_fee; ;; liq ton
@@ -143,8 +146,9 @@ math::add_lp(int a, int b) method_id {
     int k = multiply(reserve_a_initial, reserve_b_initial); ;; coefficient, needed for formulas
     int reserve_a_after_execution = division(k, reserve_b_initial + amount_input);
     int amount_out = reserve_a_initial - reserve_a_after_execution;
-    int fee = get_percent(amount_out, b_service_fee, 1000000000);
-    amount_out -= fee;
+    int s_fee = get_percent(amount_out, b_service_fee, 1000000000);
+    int lp_fee = get_percent(amount_out, lp_fee_percentage, 1000000000);
+    amount_out = amount_out - s_fee - lp_fee;
     int market_price = division(amount_input, amount_out);
-    return (amount_out, market_price, fee);
+    return (amount_out, market_price, s_fee, lp_fee);
 }
