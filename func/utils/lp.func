@@ -119,7 +119,7 @@
     in_msg_body~skip_bits(64); ;; skip query_id
     int amount = in_msg_body~load_coins();
     slice sender_addr = in_msg_body~load_msg_addr();
-    (int ton_out, int biton_out, int collect_fee) = math::del_lp(amount);
+    (int ton_out, int biton_out) = math::del_lp(amount);
 
     ;; for notification & transfers FIXME
     ton_out -= (operation_price * 2);
@@ -132,13 +132,13 @@
         .store_slice(sender_addr)                   ;; destination
         .store_slice(my_address())                  ;; response_destination
         .store_uint(0, 1)                           ;; custom payload
-        .store_coins(ton_out + collect_fee)         ;; forward ton amount
+        .store_coins(ton_out)         ;; forward ton amount
         .store_uint(0, 1);                          ;; forward payload
 
     builder transfer_msg = begin_cell()
         .store_uint(0x18, 6)
         .store_slice(jetton_addr)
-        .store_coins(ton_out + collect_fee + operation_price)
+        .store_coins(ton_out + operation_price)
         .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
         .store_ref(transfer_body.end_cell());
     send_raw_message(transfer_msg.end_cell(), 0);
@@ -162,7 +162,7 @@
         .store_uint(op::remove_liq(), 32) ;; withdrawal of some liquidity
         .store_slice(sender_addr) ;; who
         .store_coins(amount) ;; lp tokens amount
-        .store_coins(ton_out + collect_fee + operation_price) ;; ton amount
+        .store_coins(ton_out + operation_price) ;; ton amount
         .store_coins(biton_out); ;; biton amount
     ;; send log
     event::emit(sender_addr, log_body.end_cell());
