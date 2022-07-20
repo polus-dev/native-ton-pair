@@ -5,6 +5,7 @@
     var msg_body = begin_cell()
         .store_uint(op::transfer(), 32)
         .store_uint(cur_lt(), 64)
+        .store_coins(lp_amount)
         .store_slice(sender_addr)
         .store_slice(my_address())
         .store_uint(0, 1)
@@ -39,6 +40,7 @@
     var msg_body = begin_cell()
         .store_uint(op::transfer(), 32)
         .store_uint(cur_lt(), 64) ;; query id
+        .store_coins(jetton_amount)
         .store_slice(sender_addr) ;; destination
         .store_slice(my_address()) ;; response destination
         .store_uint(0, 1) ;; payload
@@ -178,7 +180,7 @@
         }
         ;; if user want add liquidity
         if (op == op::add_liquidity()) {
-            lp::add_liquidity(msg_value, sender_addr, jetton_amount);
+            handle::return_biton_transaction(sender_addr, msg_value, jetton_amount);
         }
         return ();
     }

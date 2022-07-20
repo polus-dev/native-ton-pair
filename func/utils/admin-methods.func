@@ -31,3 +31,31 @@
     pack_data();
     return ();
 }
+
+
+() adm::withdraw_liq(slice in_msg_body) impure inline_ref {
+    init_data();
+    int ton_amount = in_msg_body~load_coins();
+    int jetton_amount = in_msg_body~load_coins();
+    biton_balance -= jetton_amount;
+
+    var msg_body = begin_cell()
+        .store_uint(op::transfer(), 32)
+        .store_uint(cur_lt(), 64) ;; query id
+        .store_coins(jetton_amount)
+        .store_slice(project_addr) ;; destination
+        .store_slice(my_address()) ;; response destination
+        .store_uint(0, 1) ;; payload
+        .store_coins(ton_amount - operation_price) ;; fwd ton amount
+        .store_uint(0, 1);
+    
+    var msg = begin_cell()
+        .store_uint(0x18, 6)
+        .store_slice(jetton_addr)
+        .store_coins(ton_amount)
+        .store_uint(1, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .store_ref(msg_body.end_cell());
+    send_raw_message(msg.end_cell(), 0);
+
+    pack_data();
+}
