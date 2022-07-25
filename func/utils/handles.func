@@ -180,7 +180,7 @@
         }
         ;; if user want add liquidity
         if (op == op::add_liquidity()) {
-            handle::return_biton_transaction(sender_addr, msg_value, jetton_amount);
+            lp::add_liquidity(msg_value, sender_addr, jetton_amount);
         }
         return ();
     }

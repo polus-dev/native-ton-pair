@@ -101,8 +101,10 @@ math::add_lp(int a, int b) method_id {
 ) math::del_lp(int a) method_id {
     init_data();
     int user_percent = division(a, lp_total_supply);
-    int a_out = get_percent(get_balance().pair_first() - service_collect_fee - lp_collect_fee, user_percent, 1000000000);
+    int a_out = get_percent(int_gbl::balance - service_collect_fee - lp_collect_fee, user_percent, 1000000000);
     int b_out = get_percent(biton_balance, user_percent, 1000000000);
+    a_out = minus_percent(a_out, 100000000, 1000000000);
+    b_out = minus_percent(b_out, 100000000, 1000000000);
     return (a_out, b_out);
 }
 
