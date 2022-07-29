@@ -4,7 +4,7 @@ import qs from 'qs'
 import { fileToCell } from '../src/utils'
 
 const DEX_CODE = fileToCell('auto/main.func.code.boc')
-const DEX_ADDR = new Address('EQBDWGru2u2cMtI95x2v3z9AZwIZonfA_Ztq4wtCihU2unNb')
+const DEX_ADDR = new Address('EQAD8YIaIhVPmYjmgwEbQMpRL20W85OWxQSp0K2EuY7DY9ic')
 
 function main () {
     const body = new Builder()
